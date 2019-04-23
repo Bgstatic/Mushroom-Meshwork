@@ -70,6 +70,7 @@ class pipeImages extends ImageView {
             //main.images[initial_index_X][initial_index_Y].relocate(main.images[final_index_X][final_index_Y].getX(), main.images[final_index_X][final_index_Y].getY());
             //main.images[final_index_X][final_index_Y].relocate(temp_X, temp_Y);
             
+            ///////////////////////////////////////* BURALAR ÇOK KARIŞTI BİR ÇEKİ DÜZEN VERECEM *////////////////
 
             main.images[initial_index_X][initial_index_Y].setX(main.images[final_index_X][final_index_Y].getX());
             main.images[initial_index_X][initial_index_Y].setY(main.images[final_index_X][final_index_Y].getY());
