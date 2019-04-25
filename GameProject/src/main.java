@@ -32,58 +32,67 @@ class pipeImages extends ImageView {
         this.direction = direction;
 
         setOnMousePressed(e -> {
-            System.out.println("İlk image kordinat : " + e.getSceneX() + " " + e.getSceneY());
+
             initial_index_X = (int) (e.getSceneY() / 100);
             initial_index_Y = (int) (e.getSceneX() / 100);
-            System.out.println("press kordinat: " + initial_index_X + " " + initial_index_Y);
 
         });
-        /* setOnMouseReleased(e -> {
-            System.out.println("İkinci image kordinat : " + e.getSceneX()+ " " + e.getSceneY());
-            final_index_X = (int)(e.getSceneY() / 100);
-            final_index_Y = (int)(e.getSceneX() / 100);
-            System.out.println("release kordinat: " + final_index_X + " " + final_index_Y);
-        });*/
-        /*setOnMouseDragged(e -> {
-            final_index_X = (int) (e.getSceneY() / 100);
-            final_index_Y = (int) (e.getSceneX() / 100);
-            //System.out.println(main.images[final_index_X][final_index_Y].getX() + " " + main.images[final_index_X][final_index_Y].getY());
-            //System.out.println(main.images[initial_index_X][initial_index_Y].getX() + " " + main.images[initial_index_X][initial_index_Y].getY()); 
-            
-        });*/
+        
         setOnMouseReleased(e -> {
+            
             final_index_X = (int) (e.getSceneY() / 100);
             final_index_Y = (int) (e.getSceneX() / 100);
-                        System.out.println("released initial kordinat: " + main.images[initial_index_X][initial_index_Y].getX() + " " + main.images[initial_index_X][initial_index_Y].getY());
-                                    System.out.println("released final kordinat: " + main.images[final_index_X][final_index_Y].getX() + " " + main.images[final_index_X][final_index_Y].getY());
-                                    
-             /*                       
-            main.images[initial_index_X][initial_index_Y].setTranslateX(main.images[final_index_X][final_index_Y].getX() - main.images[initial_index_X][initial_index_Y].getX());
-            main.images[initial_index_X][initial_index_Y].setTranslateY(main.images[final_index_X][final_index_Y].getY() - main.images[initial_index_X][initial_index_Y].getY());
-            main.images[final_index_X][final_index_Y].setTranslateX(main.images[initial_index_X][initial_index_Y].getX() - main.images[final_index_X][final_index_Y].getX());
-            main.images[final_index_X][final_index_Y].setTranslateY(main.images[initial_index_X][initial_index_Y].getY() - main.images[final_index_X][final_index_Y].getY()); 
-                                    */
-            //main.images[3][1].setTranslateX(100);
-            //main.images[3][1].setTranslateY(250);
-            int temp_X = (int)(main.images[initial_index_X][initial_index_Y].getX());
-            int temp_Y = (int)(main.images[initial_index_X][initial_index_Y].getY());
-            //main.images[initial_index_X][initial_index_Y].relocate(main.images[final_index_X][final_index_Y].getX(), main.images[final_index_X][final_index_Y].getY());
-            //main.images[final_index_X][final_index_Y].relocate(temp_X, temp_Y);
-            
-            ///////////////////////////////////////* BURALAR ÇOK KARIŞTI BİR ÇEKİ DÜZEN VERECEM *////////////////
+            if(canMove(initial_index_X, initial_index_Y, final_index_X, final_index_Y)){
 
-            main.images[initial_index_X][initial_index_Y].setX(main.images[final_index_X][final_index_Y].getX());
-            main.images[initial_index_X][initial_index_Y].setY(main.images[final_index_X][final_index_Y].getY());
-            main.images[final_index_X][final_index_Y].setX(temp_X);
-            main.images[final_index_X][final_index_Y].setY(temp_Y);
-            pipeImages temp = main.images[initial_index_X][initial_index_Y];
-            main.images[initial_index_X][initial_index_Y] = main.images[final_index_X][final_index_Y];
-            main.images[final_index_X][final_index_Y] = temp;
-            
-            System.out.println("" + main.images[2][2].direction);
+                    int temp_X = (int)(main.images[initial_index_X][initial_index_Y].getX());
+                    int temp_Y = (int)(main.images[initial_index_X][initial_index_Y].getY());
 
+                    //Kordinatlarının yer değiştirmesi
+                    main.images[initial_index_X][initial_index_Y].setX(main.images[final_index_X][final_index_Y].getX());
+                    main.images[initial_index_X][initial_index_Y].setY(main.images[final_index_X][final_index_Y].getY());
+                    main.images[final_index_X][final_index_Y].setX(temp_X);
+                    main.images[final_index_X][final_index_Y].setY(temp_Y);
+                    
+                    //Array içinde de değişiklik yapmamız gerekiyor
+                    pipeImages temp = main.images[initial_index_X][initial_index_Y];
+                    main.images[initial_index_X][initial_index_Y] = main.images[final_index_X][final_index_Y];
+                    main.images[final_index_X][final_index_Y] = temp;
+                
+            }
         });
     }
+    //Yaptığımız hareketin mümkün olup olmadığının kontrolü
+    public boolean canMove(int initial_X, int initial_Y, int final_X, int final_Y){
+        
+        if(!main.images[final_X][final_Y].type.equals("Free")){
+            return false;
+        }
+        if(main.images[initial_X][initial_Y].direction.equals("PipeStatic") 
+               || main.images[initial_X][initial_Y].direction.equals("Starter")
+               ||  main.images[initial_X][initial_Y].direction.equals("End")){
+            return false;
+        }
+        
+        //Burada ilginç bir trick yaptım: hareket ettirdiğimiz kutu empty olan kutunun sağ-sol-üst-alt'ında olup olmadığını kontrol etmek için
+        // bulundukları konumların sayı karşılığını aldım mesela images[2][3] == 23, images[1][1] == 11; konumlarının indexlerini birleştirip sayı olarak aldım kısacası
+        // sonrasında if içindeki işlemler sol-sağ-üst-alt olup olmadığını veriyor.
+        int initialAsNumber = initial_X * 10 + initial_Y;
+        int finalAsNumber = final_X * 10 + final_Y;
+        
+        if(finalAsNumber - initialAsNumber == 1 
+        || finalAsNumber - initialAsNumber == 10
+        || initialAsNumber - finalAsNumber == 1
+        || initialAsNumber - finalAsNumber == 10){
+            return true;
+            
+        }
+        else{
+            return false;
+        }
+        //
+        //
+    }
+    
 }
 
 class ImagePane extends Pane {
@@ -126,37 +135,19 @@ public class main extends Application {
         // start game //
         Stage firstStage = new Stage();
         ImagePane firstLevel = new ImagePane();
-        //firstLevel.getChildren().add(images[0][0]);
         Scene Lvl1_Scene = new Scene(firstLevel, 400, 400);
         firstStage.setScene(Lvl1_Scene);
         firstStage.setTitle("Level 1");
         readInput("src/level1.txt");
         firstLevel.print();
 
-        System.out.println(images[3][1].getX());
-        System.out.println(images[3][1].getY());
-        System.out.println(images[3][1].getScaleX());
-        System.out.println(images[3][1]);
-
-        //Adding images to pane
-        /* for(int i = 0; i < 4; i++){
-            for(int j = 0; j < 4; j++){
-                firstLevel.getChildren().add(images[i][j]);
-                images[i][j].setX((j*100));
-                images[i][j].setY((i*100));
-            }
-        }*/
-        //
+        
         //start game end //
         btn.setOnAction(e -> {
             primaryStage.close();
             firstStage.show();
 
         });
-
-    }
-
-    public static void print() {
 
     }
 
