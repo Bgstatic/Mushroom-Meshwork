@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javax.lang.model.SourceVersion;
 
 /**
  *
@@ -20,7 +21,7 @@ class pipeImages extends ImageView {
     public String type;
     public String direction;
     public int initial_index_X, initial_index_Y, final_index_X, final_index_Y;
-
+    public boolean isLevelFinished;
     //no arg cons ekle
     pipeImages() {
 
@@ -42,7 +43,7 @@ class pipeImages extends ImageView {
             
             final_index_X = (int) (e.getSceneY() / 100);
             final_index_Y = (int) (e.getSceneX() / 100);
-            if(canMove(initial_index_X, initial_index_Y, final_index_X, final_index_Y)){
+            if(canMove(initial_index_X, initial_index_Y, final_index_X, final_index_Y) && !isFinished()){
 
                     int temp_X = (int)(main.images[initial_index_X][initial_index_Y].getX());
                     int temp_Y = (int)(main.images[initial_index_X][initial_index_Y].getY());
@@ -57,7 +58,8 @@ class pipeImages extends ImageView {
                     pipeImages temp = main.images[initial_index_X][initial_index_Y];
                     main.images[initial_index_X][initial_index_Y] = main.images[final_index_X][final_index_Y];
                     main.images[final_index_X][final_index_Y] = temp;
-                
+                    
+                    main.move++;
             }
         });
     }
@@ -93,6 +95,107 @@ class pipeImages extends ImageView {
         //
     }
     
+    public boolean isFinished(){
+
+        int x = (whereIsStarter().yProperty().intValue()) / 100;
+        int y = (whereIsStarter().xProperty().intValue()) / 100;
+        
+        if(main.images[x][y].type.equals("Vertical"))
+            checkNext(x+1,y);
+        else if(main.images[x][y].type.equals("Horizontal"))
+            checkNext(x,y-1);
+        
+        if(isLevelFinished)
+            return true;
+        else
+            return false;
+    }
+    
+    public pipeImages whereIsStarter (){
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if(main.images[i][j].direction.equals("Starter"))
+                    return main.images[i][j];
+            }
+        }
+        return null;
+    }
+    
+    public void checkNext(int x, int y){
+        // x'i arttırmak aşağı gitmek demek bu yüzden reverse=true ise yukarı gitmek gerekiyor yani x'i azaltmak gerekiyo
+        // aynı şekilde y'de sağ gitmek demek reverse=true olduğunda sola gitmek gerekiyor
+        boolean xReverse = false;
+        boolean yReverse = false;
+        //if(x < 4 && x >= 0 && y < 4 && y < 4) ekle sonradan array dışına çıkmış mı çıkmamış mı diye
+        
+        if(main.images[x][y].direction.equals("Pipe") && main.images[x][y].type.equals("Vertical")){
+            if(!xReverse)
+                checkNext(x+1, y);
+            else
+                checkNext(x-1, y);
+        }
+        if(main.images[x][y].direction.equals("Pipe") && main.images[x][y].type.equals("Horizontal")){
+            if(!yReverse)
+                checkNext(x, y+1);
+            else
+                checkNext(x, y-1);
+        }
+        if(main.images[x][y].direction.equals("Pipe") && main.images[x][y].type.equals("00")){
+            if(!xReverse){
+                checkNext(x, y-1);
+                yReverse = true;
+            }
+            else{
+                checkNext(x-1, y);
+                yReverse = true;
+            }
+        }
+        if(main.images[x][y].direction.equals("Pipe") && main.images[x][y].type.equals("01")){
+            if(!yReverse){
+                checkNext(x, y+1);
+                xReverse = true;
+            }
+            else{
+                checkNext(x-1, y);
+                xReverse = true;
+            }
+        }
+        if(main.images[x][y].direction.equals("Pipe") && main.images[x][y].type.equals("11")){
+            if(!xReverse){
+                checkNext(x+1, y);
+                yReverse = false;
+            }
+            else{
+                checkNext(x, y+1);
+                yReverse = false;
+            }
+        }
+        if(main.images[x][y].direction.equals("Pipe") && main.images[x][y].type.equals("10")){
+            if(!yReverse){
+                checkNext(x+1, y);
+                xReverse = false;
+            }
+            else{
+                checkNext(x, y-1);
+                xReverse = false;
+            }
+        }
+        if(main.images[x][y].direction.equals("PipeStatic") && main.images[x][y].type.equals("Vertical")){
+            if(!xReverse)
+                checkNext(x+1, y);
+            else
+                checkNext(x-1, y);
+        }
+        if(main.images[x][y].direction.equals("PipeStatic") && main.images[x][y].type.equals("Horizontal")){
+            if(!yReverse)
+                checkNext(x, y+1);
+            else
+                checkNext(x, y-1);
+        }
+        if(main.images[x][y].direction.equals("End")){
+            isLevelFinished = true;
+        }
+    }
 }
 
 class ImagePane extends Pane {
@@ -114,7 +217,7 @@ class ImagePane extends Pane {
 public class main extends Application {
 
     public static pipeImages[][] images = new pipeImages[4][4];
-
+    public static int move;
     @Override
     public void start(Stage primaryStage) {
 
