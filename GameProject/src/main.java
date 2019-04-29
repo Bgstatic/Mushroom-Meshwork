@@ -2,6 +2,7 @@
 
 import java.io.File;
 import java.util.Scanner;
+import javafx.animation.PathTransition;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -9,8 +10,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.ArcTo;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
 import javafx.stage.Stage;
-import javax.lang.model.SourceVersion;
+import javafx.util.Duration;
 
 /**
  *
@@ -22,6 +27,8 @@ class pipeImages extends ImageView {
     public String direction;
     public int initial_index_X, initial_index_Y, final_index_X, final_index_Y;
     public boolean isLevelFinished;
+    public Path path = new Path();
+    public int pathIndex;
     //no arg cons ekle
     pipeImages() {
 
@@ -60,6 +67,22 @@ class pipeImages extends ImageView {
                     main.images[final_index_X][final_index_Y] = temp;
                     
                     main.move++;
+                    
+                    path = new Path(); //bir üstteki if içinde kontrol yaparken yanlışlıkla path'i de çiziyoruz. Bu yüzden alttaki if i çalıştırdığında path'i 2. kez çiziyor.
+                                       //Bunu önlemek için path'i yeniliyoruz burada.
+                    
+                    if(isFinished()){
+                        
+                        PathTransition pt = new PathTransition();
+                            pt.setDuration(Duration.millis(4000));
+                            pt.setPath(path);
+                            pt.setNode(main.mushroom);
+                            pt.setAutoReverse(false);
+                            pt.play();
+                            pt.setOnFinished(eh -> {
+                                System.out.println("Bitti");
+                            });
+                    }
             }
         });
     }
@@ -100,11 +123,14 @@ class pipeImages extends ImageView {
         int x = (whereIsStarter().yProperty().intValue()) / 100;
         int y = (whereIsStarter().xProperty().intValue()) / 100;
         
-        if(main.images[x][y].type.equals("Vertical"))
+        if(main.images[x][y].type.equals("Vertical")){
+            path.getElements().add(new LineTo(main.images[x][y].getX()+50.0f, main.images[x][y].getY()+100.0f));
             checkNext(x+1,y);
-        else if(main.images[x][y].type.equals("Horizontal"))
+        }
+        else if(main.images[x][y].type.equals("Horizontal")){
+            path.getElements().add(new LineTo(main.images[x][y].getX(), main.images[x][y].getY()+50.0f));
             checkNext(x,y-1);
-        
+        }
         if(isLevelFinished)
             return true;
         else
@@ -114,14 +140,17 @@ class pipeImages extends ImageView {
     public pipeImages whereIsStarter (){
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                if(main.images[i][j].direction.equals("Starter"))
+                if(main.images[i][j].direction.equals("Starter")){
+                    path.getElements().add(new MoveTo(main.images[i][j].getX()+50.0f, main.images[i][j].getY()+50.0f)); // başlangıç noktası
                     return main.images[i][j];
+                }
             }
         }
         return null;
     }
     
     public void checkNext(int x, int y){
+        //BU METHOD AYNI ZAMANDA PATH DE ÇİZİYOR.
         // x'i arttırmak aşağı gitmek demek bu yüzden reverse=true ise yukarı gitmek gerekiyor yani x'i azaltmak gerekiyo
         // aynı şekilde y'de sağ gitmek demek reverse=true olduğunda sola gitmek gerekiyor
         boolean xReverse = false;
@@ -129,75 +158,113 @@ class pipeImages extends ImageView {
         //if(x < 4 && x >= 0 && y < 4 && y < 4) ekle sonradan array dışına çıkmış mı çıkmamış mı diye
         
         if(main.images[x][y].direction.equals("Pipe") && main.images[x][y].type.equals("Vertical")){
-            if(!xReverse)
+            if(!xReverse){
+                path.getElements().add(new LineTo(main.images[x][y].getX()+50.0f, main.images[x][y].getY()+100.0f));
                 checkNext(x+1, y);
-            else
+            }
+            else{
+                path.getElements().add(new LineTo(main.images[x][y].getX()+50.0f, main.images[x][y].getY()));
                 checkNext(x-1, y);
+            }
         }
         if(main.images[x][y].direction.equals("Pipe") && main.images[x][y].type.equals("Horizontal")){
-            if(!yReverse)
+            if(!yReverse){
+                path.getElements().add(new LineTo(main.images[x][y].getX()+100.0f, main.images[x][y].getY()+50.0f));
                 checkNext(x, y+1);
-            else
+            }
+            else{
+                path.getElements().add(new LineTo(main.images[x][y].getX(), main.images[x][y].getY()+50.0f));
                 checkNext(x, y-1);
+            }
         }
         if(main.images[x][y].direction.equals("Pipe") && main.images[x][y].type.equals("00")){
             if(!xReverse){
+                path.getElements().add(new ArcTo(45,45,0,main.images[x][y].getX(),main.images[x][y].getY()+50, false, false));
                 checkNext(x, y-1);
                 yReverse = true;
             }
             else{
+                path.getElements().add(new ArcTo(45,45,0,main.images[x][y].getX()+50,main.images[x][y].getY(), false, false));
                 checkNext(x-1, y);
                 yReverse = true;
             }
         }
         if(main.images[x][y].direction.equals("Pipe") && main.images[x][y].type.equals("01")){
             if(!yReverse){
+                path.getElements().add(new ArcTo(45,45,0,main.images[x][y].getX()+100,main.images[x][y].getY()+50, false, false));//radiusX, radiusY, xAxisRotation, X, Y
                 checkNext(x, y+1);
                 xReverse = true;
+                
             }
             else{
+                path.getElements().add(new ArcTo(45,45,0,main.images[x][y].getX()+50,main.images[x][y].getY(), false, false));
                 checkNext(x-1, y);
                 xReverse = true;
             }
         }
         if(main.images[x][y].direction.equals("Pipe") && main.images[x][y].type.equals("11")){
             if(!xReverse){
+                path.getElements().add(new ArcTo(45,45,0,main.images[x][y].getX()+100,main.images[x][y].getY()+50, false, false));
                 checkNext(x+1, y);
                 yReverse = false;
             }
             else{
+                path.getElements().add(new ArcTo(45,45,0,main.images[x][y].getX()+50,main.images[x][y].getY()+100, false, false));
                 checkNext(x, y+1);
                 yReverse = false;
             }
         }
         if(main.images[x][y].direction.equals("Pipe") && main.images[x][y].type.equals("10")){
             if(!yReverse){
+                path.getElements().add(new ArcTo(45,45,0,main.images[x][y].getX()+50,main.images[x][y].getY()+100, false, false));
                 checkNext(x+1, y);
                 xReverse = false;
             }
             else{
+                path.getElements().add(new ArcTo(45,45,0,main.images[x][y].getX(),main.images[x][y].getY()+50, false, false));
                 checkNext(x, y-1);
                 xReverse = false;
             }
         }
         if(main.images[x][y].direction.equals("PipeStatic") && main.images[x][y].type.equals("Vertical")){
-            if(!xReverse)
+            if(!xReverse){
+                path.getElements().add(new LineTo(main.images[x][y].getX()+50.0f, main.images[x][y].getY()+100.0f));
                 checkNext(x+1, y);
-            else
+            }
+            else{
+                path.getElements().add(new LineTo(main.images[x][y].getX()+50.0f, main.images[x][y].getY()));
                 checkNext(x-1, y);
+            }
         }
         if(main.images[x][y].direction.equals("PipeStatic") && main.images[x][y].type.equals("Horizontal")){
-            if(!yReverse)
+            if(!yReverse){
+                path.getElements().add(new LineTo(main.images[x][y].getX()+100.0f, main.images[x][y].getY()+50.0f));
                 checkNext(x, y+1);
-            else
+            }
+            else{
+                path.getElements().add(new LineTo(main.images[x][y].getX(), main.images[x][y].getY()+50.0f));
                 checkNext(x, y-1);
+            }
         }
         if(main.images[x][y].direction.equals("End")){
+            if(main.images[x][y].type.equals("Horizontal"))
+                path.getElements().add(new LineTo(main.images[x][y].getX()+50.0f, main.images[x][y].getY()+50.0f));
+            else
+                path.getElements().add(new LineTo(main.images[x][y].getX()+50.0f, main.images[x][y].getY()-50.0f));
             isLevelFinished = true;
         }
     }
 }
-
+class mushroomImage extends ImageView{
+    mushroomImage(Image image, double x, double y){
+        super(image);
+        this.setFitHeight(50);
+        this.setFitWidth(50);
+        this.setX(x);
+        this.setY(y);
+        
+    }
+}
 class ImagePane extends Pane {
 
     ImagePane() {
@@ -209,14 +276,19 @@ class ImagePane extends Pane {
                 this.getChildren().add(main.images[i][j]);
                 main.images[i][j].setX((j * 100));
                 main.images[i][j].setY((i * 100));
+                if(main.images[i][j].direction.equals("Starter")){
+                    main.mushroom = new mushroomImage(new Image("images/mushroom.png"), (j*100)+25, (i*100)+25);
+                }
             }
         }
+        this.getChildren().add(main.mushroom); // to be top of pipes as image, this should be added in pane later.
     }
 }
 
 public class main extends Application {
 
     public static pipeImages[][] images = new pipeImages[4][4];
+    public static mushroomImage mushroom;
     public static int move;
     @Override
     public void start(Stage primaryStage) {
