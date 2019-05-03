@@ -142,9 +142,11 @@ class pipeImages extends ImageView {
 
         if (main.images[x][y].type.equals("Vertical")) {
             path.getElements().add(new LineTo(main.images[x][y].getX() + 50.0f, main.images[x][y].getY() + 100.0f));
+            previousMove = "toDown";
             checkNext(x + 1, y);
         } else if (main.images[x][y].type.equals("Horizontal")) {
             path.getElements().add(new LineTo(main.images[x][y].getX(), main.images[x][y].getY() + 50.0f));
+            previousMove = "toLeft";
             checkNext(x, y - 1);
         }
         if (isLevelFinished) {
@@ -166,102 +168,99 @@ class pipeImages extends ImageView {
         return null;
     }
 
+    String previousMove = "toDown";
     public void checkNext(int x, int y) {
         //BU METHOD AYNI ZAMANDA PATH DE ÇİZİYOR.
         // x'i arttırmak aşağı gitmek demek bu yüzden reverse=true ise yukarı gitmek gerekiyor yani x'i azaltmak gerekiyo
         // aynı şekilde y'de sağ gitmek demek reverse=true olduğunda sola gitmek gerekiyor
-        boolean xReverse = false;
-        boolean yReverse = false;
+
         //if(x < 4 && x >= 0 && y < 4 && y < 4) ekle sonradan array dışına çıkmış mı çıkmamış mı diye
-        System.out.println("XR = " + xReverse + " yR = " + yReverse);
         if (main.images[x][y].direction.equals("Pipe") && main.images[x][y].type.equals("Vertical")) {
-            if (!xReverse) {
-                System.out.println("PV1");
+            if (previousMove.equals("toDown")) {
+                previousMove = "toDown";
                 path.getElements().add(new LineTo(main.images[x][y].getX() + 50.0f, main.images[x][y].getY() + 100.0f));
                 checkNext(x + 1, y);
-            } else {
-                System.out.println("PV2");
+            } else if(previousMove.equals("toUp")){
+                previousMove = "toUp";
                 path.getElements().add(new LineTo(main.images[x][y].getX() + 50.0f, main.images[x][y].getY()));
                 checkNext(x - 1, y);
             }
         }
         if (main.images[x][y].direction.equals("Pipe") && main.images[x][y].type.equals("Horizontal")) {
-            System.out.println("bura");
-            if (!yReverse) {
-                System.out.println("PH1");
+            if (previousMove.equals("toRight")) {
+                previousMove = "toRight";
                 path.getElements().add(new LineTo(main.images[x][y].getX() + 100.0f, main.images[x][y].getY() + 50.0f));
                 checkNext(x, y + 1);
-            } else {
-                System.out.println("PH2");
+            } else if(previousMove.equals("toLeft")){
+                previousMove = "toLeft";
                 path.getElements().add(new LineTo(main.images[x][y].getX(), main.images[x][y].getY() + 50.0f));
                 checkNext(x, y - 1);
             }
         }
-        if (main.images[x][y].direction.equals("Pipe") && main.images[x][y].type.equals("00")) {
-            System.out.println("00" + xReverse);
-            if (!xReverse) {
-                System.out.println("001");
+        if (main.images[x][y].type.equals("00")) {
+            if (previousMove.equals("toDown")) {
+                previousMove = "toLeft";
                 path.getElements().add(new ArcTo(45, 45, 0, main.images[x][y].getX(), main.images[x][y].getY() + 50, false, false));
                 checkNext(x, y - 1);
-                yReverse = true;
-            } else {
-                System.out.println("002");
+
+            } 
+            else if (previousMove.equals("toRight")){
+                previousMove = "toUp";
                 path.getElements().add(new ArcTo(45, 45, 0, main.images[x][y].getX() + 50, main.images[x][y].getY(), false, false));
                 checkNext(x - 1, y);
-                yReverse = true;
             }
         }
-        if (main.images[x][y].direction.equals("Pipe") && main.images[x][y].type.equals("01")) {
-            if (!yReverse) {
-                System.out.println("011");
+        if (main.images[x][y].type.equals("01")) {
+            if (previousMove.equals("toDown")) {
+                previousMove = "toRight";
                 path.getElements().add(new ArcTo(45, 45, 0, main.images[x][y].getX() + 100, main.images[x][y].getY() + 50, false, false));//radiusX, radiusY, xAxisRotation, X, Y
                 checkNext(x, y + 1);
-                xReverse = true;
-                System.out.println(xReverse);
-            } else {
-                System.out.println("012");
+            } else if(previousMove.equals("toLeft")){
+                previousMove = "toUp";
                 path.getElements().add(new ArcTo(45, 45, 0, main.images[x][y].getX() + 50, main.images[x][y].getY(), false, false));
                 checkNext(x - 1, y);
-                xReverse = true;
-                System.out.println(xReverse);
             }
         }
-        if (main.images[x][y].direction.equals("Pipe") && main.images[x][y].type.equals("11")) {
-            if (!xReverse) {
+        if (main.images[x][y].type.equals("11")) {
+            if (previousMove.equals("toLeft")) {
+                previousMove = "toDown";
                 path.getElements().add(new ArcTo(45, 45, 0, main.images[x][y].getX() + 100, main.images[x][y].getY() + 50, false, false));
                 checkNext(x + 1, y);
-                yReverse = false;
-            } else {
+            } else if(previousMove.equals("toUp")){
+                previousMove = "toRight";
                 path.getElements().add(new ArcTo(45, 45, 0, main.images[x][y].getX() + 50, main.images[x][y].getY() + 100, false, false));
                 checkNext(x, y + 1);
-                yReverse = false;
             }
         }
-        if (main.images[x][y].direction.equals("Pipe") && main.images[x][y].type.equals("10")) {
-            if (!yReverse) {
+        if (main.images[x][y].type.equals("10")) {
+            if (previousMove.equals("toRight")) {
+                previousMove = "toDown";
                 path.getElements().add(new ArcTo(45, 45, 0, main.images[x][y].getX() + 50, main.images[x][y].getY() + 100, false, false));
                 checkNext(x + 1, y);
-                xReverse = false;
-            } else {
-                path.getElements().add(new ArcTo(45, 45, 0, main.images[x][y].getX(), main.images[x][y].getY() + 50, false, false));
+            } else if(previousMove.equals("toUp")) {
+                previousMove = "toLeft";
+                path.getElements().add(new ArcTo(45, 45, 0, main.images[x][y].getX(), main.images[x][y].getY() + 50, false, false));              
                 checkNext(x, y - 1);
-                xReverse = false;
             }
         }
         if (main.images[x][y].direction.equals("PipeStatic") && main.images[x][y].type.equals("Vertical")) {
-            if (!xReverse) {
+            if (previousMove.equals("toDown")) {
+                previousMove = "toDown";
                 path.getElements().add(new LineTo(main.images[x][y].getX() + 50.0f, main.images[x][y].getY() + 100.0f));
                 checkNext(x + 1, y);
-            } else {
+            } else if(previousMove.equals("toUp")){
+                previousMove = "toUp";
                 path.getElements().add(new LineTo(main.images[x][y].getX() + 50.0f, main.images[x][y].getY()));
                 checkNext(x - 1, y);
             }
         }
         if (main.images[x][y].direction.equals("PipeStatic") && main.images[x][y].type.equals("Horizontal")) {
-            if (!yReverse) {
+            if (previousMove.equals("toRight")) {
+                previousMove = "toRight";
                 path.getElements().add(new LineTo(main.images[x][y].getX() + 100.0f, main.images[x][y].getY() + 50.0f));
                 checkNext(x, y + 1);
-            } else {
+            } else if(previousMove.equals("toLeft")){
+                previousMove = "toLeft";
                 path.getElements().add(new LineTo(main.images[x][y].getX(), main.images[x][y].getY() + 50.0f));
                 checkNext(x, y - 1);
             }
@@ -270,7 +269,7 @@ class pipeImages extends ImageView {
             if (main.images[x][y].type.equals("Horizontal")) {
                 path.getElements().add(new LineTo(main.images[x][y].getX() + 50.0f, main.images[x][y].getY() + 50.0f));
             } else {
-                path.getElements().add(new LineTo(main.images[x][y].getX() + 50.0f, main.images[x][y].getY() - 50.0f));
+                path.getElements().add(new LineTo(main.images[x][y].getX() + 50.0f, main.images[x][y].getY() + 50.0f));
             }
             isLevelFinished = true;
         }
@@ -404,7 +403,7 @@ class nextLevelStage extends Stage {
         homeButton.setFitWidth(250);
 
         hbox.setSpacing(20);
-        hbox.getChildren().addAll(nextBtn, homeButton);
+        hbox.getChildren().addAll(homeButton, nextBtn);
         hbox.setAlignment(Pos.BOTTOM_CENTER);
         hbox.setPadding(new Insets(30, 40, 60, 30));
 
@@ -597,6 +596,14 @@ public class main extends Application {
                 return "images/pipestatic1.jpg";
             } else if (direction.equals("Horizontal")) {
                 return "images/pipestatic2.jpg";
+            } else if (direction.equals("00")) {
+                return "images/00_static.jpg";
+            } else if (direction.equals("01")) {
+                return "images/01_static.jpg";
+            } else if (direction.equals("10")) {
+                return "images/10_static.jpg";
+            } else if (direction.equals("11")) {
+                return "images/11_static.jpg";
             }
         } else if (type.equals("End")) {
             if (direction.equals("Vertical")) {
