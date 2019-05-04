@@ -6,7 +6,6 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -16,6 +15,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcTo;
 import javafx.scene.shape.LineTo;
@@ -38,7 +40,7 @@ class pipeImages extends ImageView {
     public boolean isLevelFinished;
     public Path path = new Path();
     public int pathIndex;
-
+    public MediaPlayer sound;
     //no arg cons ekle
     pipeImages() {
 
@@ -71,6 +73,7 @@ class pipeImages extends ImageView {
                 main.images[final_index_X][final_index_Y].setX(temp_X);
                 main.images[final_index_X][final_index_Y].setY(temp_Y);
 
+                switchSound();
                 //Array içinde de değişiklik yapmamız gerekiyor
                 pipeImages temp = main.images[initial_index_X][initial_index_Y];
                 main.images[initial_index_X][initial_index_Y] = main.images[final_index_X][final_index_Y];
@@ -100,6 +103,9 @@ class pipeImages extends ImageView {
                          */
                     });
                 }
+            }
+            else{
+                wrongMove();
             }
         });
     }
@@ -169,10 +175,9 @@ class pipeImages extends ImageView {
     }
 
     String previousMove = "toDown";
+
     public void checkNext(int x, int y) {
         //BU METHOD AYNI ZAMANDA PATH DE ÇİZİYOR.
-        // x'i arttırmak aşağı gitmek demek bu yüzden reverse=true ise yukarı gitmek gerekiyor yani x'i azaltmak gerekiyo
-        // aynı şekilde y'de sağ gitmek demek reverse=true olduğunda sola gitmek gerekiyor
 
         //if(x < 4 && x >= 0 && y < 4 && y < 4) ekle sonradan array dışına çıkmış mı çıkmamış mı diye
         if (main.images[x][y].direction.equals("Pipe") && main.images[x][y].type.equals("Vertical")) {
@@ -180,7 +185,7 @@ class pipeImages extends ImageView {
                 previousMove = "toDown";
                 path.getElements().add(new LineTo(main.images[x][y].getX() + 50.0f, main.images[x][y].getY() + 100.0f));
                 checkNext(x + 1, y);
-            } else if(previousMove.equals("toUp")){
+            } else if (previousMove.equals("toUp")) {
                 previousMove = "toUp";
                 path.getElements().add(new LineTo(main.images[x][y].getX() + 50.0f, main.images[x][y].getY()));
                 checkNext(x - 1, y);
@@ -191,7 +196,7 @@ class pipeImages extends ImageView {
                 previousMove = "toRight";
                 path.getElements().add(new LineTo(main.images[x][y].getX() + 100.0f, main.images[x][y].getY() + 50.0f));
                 checkNext(x, y + 1);
-            } else if(previousMove.equals("toLeft")){
+            } else if (previousMove.equals("toLeft")) {
                 previousMove = "toLeft";
                 path.getElements().add(new LineTo(main.images[x][y].getX(), main.images[x][y].getY() + 50.0f));
                 checkNext(x, y - 1);
@@ -203,8 +208,7 @@ class pipeImages extends ImageView {
                 path.getElements().add(new ArcTo(45, 45, 0, main.images[x][y].getX(), main.images[x][y].getY() + 50, false, false));
                 checkNext(x, y - 1);
 
-            } 
-            else if (previousMove.equals("toRight")){
+            } else if (previousMove.equals("toRight")) {
                 previousMove = "toUp";
                 path.getElements().add(new ArcTo(45, 45, 0, main.images[x][y].getX() + 50, main.images[x][y].getY(), false, false));
                 checkNext(x - 1, y);
@@ -215,7 +219,7 @@ class pipeImages extends ImageView {
                 previousMove = "toRight";
                 path.getElements().add(new ArcTo(45, 45, 0, main.images[x][y].getX() + 100, main.images[x][y].getY() + 50, false, false));//radiusX, radiusY, xAxisRotation, X, Y
                 checkNext(x, y + 1);
-            } else if(previousMove.equals("toLeft")){
+            } else if (previousMove.equals("toLeft")) {
                 previousMove = "toUp";
                 path.getElements().add(new ArcTo(45, 45, 0, main.images[x][y].getX() + 50, main.images[x][y].getY(), false, false));
                 checkNext(x - 1, y);
@@ -226,7 +230,7 @@ class pipeImages extends ImageView {
                 previousMove = "toDown";
                 path.getElements().add(new ArcTo(45, 45, 0, main.images[x][y].getX() + 100, main.images[x][y].getY() + 50, false, false));
                 checkNext(x + 1, y);
-            } else if(previousMove.equals("toUp")){
+            } else if (previousMove.equals("toUp")) {
                 previousMove = "toRight";
                 path.getElements().add(new ArcTo(45, 45, 0, main.images[x][y].getX() + 50, main.images[x][y].getY() + 100, false, false));
                 checkNext(x, y + 1);
@@ -237,9 +241,9 @@ class pipeImages extends ImageView {
                 previousMove = "toDown";
                 path.getElements().add(new ArcTo(45, 45, 0, main.images[x][y].getX() + 50, main.images[x][y].getY() + 100, false, false));
                 checkNext(x + 1, y);
-            } else if(previousMove.equals("toUp")) {
+            } else if (previousMove.equals("toUp")) {
                 previousMove = "toLeft";
-                path.getElements().add(new ArcTo(45, 45, 0, main.images[x][y].getX(), main.images[x][y].getY() + 50, false, false));              
+                path.getElements().add(new ArcTo(45, 45, 0, main.images[x][y].getX(), main.images[x][y].getY() + 50, false, false));
                 checkNext(x, y - 1);
             }
         }
@@ -248,7 +252,7 @@ class pipeImages extends ImageView {
                 previousMove = "toDown";
                 path.getElements().add(new LineTo(main.images[x][y].getX() + 50.0f, main.images[x][y].getY() + 100.0f));
                 checkNext(x + 1, y);
-            } else if(previousMove.equals("toUp")){
+            } else if (previousMove.equals("toUp")) {
                 previousMove = "toUp";
                 path.getElements().add(new LineTo(main.images[x][y].getX() + 50.0f, main.images[x][y].getY()));
                 checkNext(x - 1, y);
@@ -259,7 +263,7 @@ class pipeImages extends ImageView {
                 previousMove = "toRight";
                 path.getElements().add(new LineTo(main.images[x][y].getX() + 100.0f, main.images[x][y].getY() + 50.0f));
                 checkNext(x, y + 1);
-            } else if(previousMove.equals("toLeft")){
+            } else if (previousMove.equals("toLeft")) {
                 previousMove = "toLeft";
                 path.getElements().add(new LineTo(main.images[x][y].getX(), main.images[x][y].getY() + 50.0f));
                 checkNext(x, y - 1);
@@ -272,6 +276,27 @@ class pipeImages extends ImageView {
                 path.getElements().add(new LineTo(main.images[x][y].getX() + 50.0f, main.images[x][y].getY() + 50.0f));
             }
             isLevelFinished = true;
+        }
+    }
+    
+    public void switchSound(){
+        try {
+            sound = new MediaPlayer(new Media(this.getClass().getResource("musics/switch.wav").toExternalForm()));
+            sound.setVolume(0.5);
+            sound.play();
+
+        } catch (Exception e) {
+            System.out.println("error");
+        }
+    }
+    public void wrongMove(){
+        try {
+            sound = new MediaPlayer(new Media(this.getClass().getResource("musics/wrongMove.wav").toExternalForm()));
+            sound.setVolume(0.5);
+            sound.play();
+
+        } catch (Exception e) {
+            System.out.println("error");
         }
     }
 }
@@ -322,7 +347,7 @@ class pauseStage extends Stage {
         pauseBg.setFitWidth(660);
 
         VBox vbox = new VBox();
-        
+
         StackPane closePane = new StackPane();
         Image close = new Image("images/closeButton.png");
         ImageView closeButton = new ImageView(close);
@@ -342,20 +367,22 @@ class pauseStage extends Stage {
         hbox.getChildren().addAll(homeBtn);
         hbox.setAlignment(Pos.BOTTOM_CENTER);
         hbox.setPadding(new Insets(30, 40, 60, 30));
-        
+
         vbox.setSpacing(200);
         vbox.getChildren().addAll(closePane, hbox);
-        
+
         pane.getChildren().addAll(pauseBg, vbox);
 
         this.setScene(scene);
         this.initStyle(StageStyle.TRANSPARENT);
 
         closeButton.setOnMouseClicked(e -> {
+            main.buttonPlay();
             this.close();
         });
 
         homeBtn.setOnMouseClicked(e -> {
+            main.buttonPlay();
             main.level = 0;
             main.totalMove = 0;
             gameStage.moveInLevel = 0;
@@ -371,8 +398,11 @@ class pauseStage extends Stage {
 class nextLevelStage extends Stage {
 
     double x, y;
-
+    public static MediaPlayer winSound;
     public nextLevelStage() {
+        gameStage.levelSound.stop();
+        playMusic();
+        
         StackPane pane = new StackPane();
         Scene scene = new Scene(pane, 660, 475);
         scene.setFill(Color.TRANSPARENT);
@@ -426,14 +456,18 @@ class nextLevelStage extends Stage {
         });
 
         nextBtn.setOnMouseClicked(e -> {
+            main.buttonPlay();
             gameStage.moveInLevel = 0;
             this.close();
             main.readInput(main.levels[++main.level]);
             main.lvlStage.changeTitle();
             gameStage.firstLevel.print();
+            winSound.stop();
+            main.lvlStage.startMusic();
         });
 
         homeButton.setOnMouseClicked(e -> {
+            main.buttonPlay();
             main.level = 0;
             main.totalMove = 0;
             gameStage.moveInLevel = 0;
@@ -443,13 +477,23 @@ class nextLevelStage extends Stage {
             mainMenu.start(new Stage());
         });
     }
+    public void playMusic(){
+        try {
+            winSound = new MediaPlayer(new Media(this.getClass().getResource("musics/levelCompleted.wav").toExternalForm()));
+            winSound.setVolume(0.2);
+            winSound.play();
+        } catch (Exception e) {
+            System.out.println("error");
+        }  
 
+    }
 }
 
 class gameStage extends Stage {
 
     public static ImagePane firstLevel;
     public static int moveInLevel;
+    public static MediaPlayer levelSound;
     gameStage() {
 
         firstLevel = new ImagePane();
@@ -458,6 +502,14 @@ class gameStage extends Stage {
         this.setTitle("Level " + (main.level + 1));
         main.readInput(main.levels[main.level]);
         firstLevel.print();
+        
+        try {
+            levelSound = new MediaPlayer(new Media(this.getClass().getResource("musics/level"+(main.level + 1) + ".mp3").toExternalForm()));
+            levelSound.setVolume(0.2);
+        } catch (Exception e) {
+            System.out.println("error");
+        }
+        
         scene.setOnKeyPressed(e -> {
             if (e.getCode().equals(KeyCode.ESCAPE)) {
                 pauseStage pause = new pauseStage();
@@ -469,6 +521,14 @@ class gameStage extends Stage {
     public void changeTitle() {
         this.setTitle("Level " + (main.level + 1));
     }
+    public void startMusic(){
+        levelSound = new MediaPlayer(new Media(this.getClass().getResource("musics/level"+(main.level + 1) + ".mp3").toExternalForm()));
+        levelSound.setVolume(0.2);
+        levelSound.play();
+    }
+    public void stopMusic(){
+        levelSound.stop();
+    }
 }
 
 public class main extends Application {
@@ -479,13 +539,23 @@ public class main extends Application {
     public static int level = 0;
     public static String[] levels = {"src/level1.txt", "src/level2.txt", "src/level3.txt", "src/level4.txt", "src/level5.txt"};
     public static gameStage lvlStage;
-
+    public static MediaPlayer mainSound;
+    public static MediaPlayer buttonSound;
     @Override
     public void start(Stage primaryStage) {
 
         // Main scene //
-        Button btn = new Button();
-        btn.setText("Start");
+        try {
+            mainSound = new MediaPlayer(new Media(this.getClass().getResource("musics/mainScene.mp3").toExternalForm()));
+            mainSound.setVolume(0.2);
+            mainSound.play();
+            
+            buttonSound = new MediaPlayer(new Media(this.getClass().getResource("musics/menuNavigate.wav").toExternalForm()));
+            buttonSound.setVolume(0.2);
+            
+        } catch (Exception e) {
+            System.out.println("error");
+        }
 
         StackPane root = new StackPane();
         Image bgImage = new Image("images/bg.gif");
@@ -518,20 +588,20 @@ public class main extends Application {
         lvlStage = new gameStage();
 
         //start game end //
-        btn.setOnAction(e -> {
-            primaryStage.close();
-            lvlStage.show();
-        });
         startButton.setOnMouseClicked(e -> {
+            main.buttonPlay();
             primaryStage.close();
             lvlStage.show();
+            mainSound.stop();
+            lvlStage.startMusic();
         });
 
     }
 
-    /**
-     * @param args the command line arguments
-     */
+    public static void buttonPlay(){
+        main.buttonSound.stop();
+        main.buttonSound.play();
+    }
     public static void main(String[] args) {
         launch(args);
     }
@@ -614,4 +684,5 @@ public class main extends Application {
         }
         return null;
     }
+    
 }
