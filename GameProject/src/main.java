@@ -7,17 +7,18 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcTo;
 import javafx.scene.shape.LineTo;
@@ -40,7 +41,7 @@ class pipeImages extends ImageView {
     public boolean isLevelFinished;
     public Path path = new Path();
     public int pathIndex;
-    public MediaPlayer sound;
+    
     //no arg cons ekle
     pipeImages() {
 
@@ -280,24 +281,12 @@ class pipeImages extends ImageView {
     }
     
     public void switchSound(){
-        try {
-            sound = new MediaPlayer(new Media(this.getClass().getResource("musics/switch.wav").toExternalForm()));
-            sound.setVolume(0.5);
-            sound.play();
-
-        } catch (Exception e) {
-            System.out.println("error");
-        }
+        gameStage.switchEffect.stop();
+        gameStage.switchEffect.play();
     }
     public void wrongMove(){
-        try {
-            sound = new MediaPlayer(new Media(this.getClass().getResource("musics/wrongMove.wav").toExternalForm()));
-            sound.setVolume(0.5);
-            sound.play();
-
-        } catch (Exception e) {
-            System.out.println("error");
-        }
+        gameStage.wrongMove.stop();
+        gameStage.wrongMove.play();
     }
 }
 
@@ -332,7 +321,6 @@ class ImagePane extends Pane {
         this.getChildren().add(main.mushroom); // to be top of pipes as image, this should be added in pane later.
     }
 }
-
 class pauseStage extends Stage {
 
     public pauseStage() {
@@ -362,9 +350,12 @@ class pauseStage extends Stage {
         ImageView homeBtn = new ImageView(homeImage);
         homeBtn.setFitHeight(75);
         homeBtn.setFitWidth(250);
-
+        Image settingsImage = new Image("images/settings-2.png");
+        ImageView settingsBtn = new ImageView(settingsImage);
+        settingsBtn.setFitHeight(75);
+        settingsBtn.setFitWidth(250);
         hbox.setSpacing(20);
-        hbox.getChildren().addAll(homeBtn);
+        hbox.getChildren().addAll(homeBtn, settingsBtn);
         hbox.setAlignment(Pos.BOTTOM_CENTER);
         hbox.setPadding(new Insets(30, 40, 60, 30));
 
@@ -380,7 +371,11 @@ class pauseStage extends Stage {
             main.buttonPlay();
             this.close();
         });
-
+        settingsBtn.setOnMouseClicked(e -> {
+            main.buttonPlay();
+            settingsStage settings = new settingsStage();
+            settings.show();
+        });
         homeBtn.setOnMouseClicked(e -> {
             main.buttonPlay();
             main.level = 0;
@@ -391,8 +386,115 @@ class pauseStage extends Stage {
             main mainMenu = new main();
             mainMenu.start(new Stage());
         });
+        scene.setOnKeyPressed(e -> {
+            if (e.getCode().equals(KeyCode.ESCAPE)) {
+                this.close();
+            }
+        });
     }
+}
 
+class settingsStage extends Stage {
+
+    public settingsStage() {
+        StackPane pane = new StackPane();
+        Scene scene = new Scene(pane, 660, 475);
+        scene.setFill(Color.TRANSPARENT);
+        pane.setBackground(Background.EMPTY);
+
+        Image bg = new Image("images/settingsWindow.png");
+        ImageView pauseBg = new ImageView(bg);
+        pauseBg.setFitHeight(475);
+        pauseBg.setFitWidth(660);
+
+        VBox vbox = new VBox();
+
+        StackPane closePane = new StackPane();
+        Image close = new Image("images/closeButton.png");
+        ImageView closeButton = new ImageView(close);
+        closeButton.setFitHeight(25);
+        closeButton.setFitWidth(25);
+        closePane.getChildren().add(closeButton);
+        closePane.setAlignment(Pos.TOP_RIGHT);
+        closePane.setPadding(new Insets(60, 50, 0, 0));
+        
+        VBox volumes = new VBox();
+        
+        // MAIN MUSIC SLIDER START //
+        HBox volumeHbox = new HBox();
+        Slider musicVol = new Slider();
+        musicVol.setPrefWidth(250);
+        musicVol.setMaxWidth(Region.USE_PREF_SIZE);
+        musicVol.setMinWidth(30);
+        musicVol.setValue(main.mainSound.getVolume() * 200);
+        main.mainSound.volumeProperty().bind(musicVol.valueProperty().divide(200));
+        gameStage.levelSound.volumeProperty().bind(musicVol.valueProperty().divide(200));
+        volumeHbox.setAlignment(Pos.CENTER);
+        
+        Label music = new Label("Music volume: ");
+        music.setFont(new Font("Arial", 20));
+        music.setTextFill(Color.web("#ffffff"));
+        music.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 5.0 , 0 , 0 )");
+        volumeHbox.getChildren().addAll(music, musicVol);
+        //MAIN MUSIC SLIDER END //
+        
+        // EFFECTS SLIDER START //
+        HBox effectsHbox = new HBox();
+        Slider effectsSlider = new Slider();
+        effectsSlider.setPrefWidth(250);
+        effectsSlider.setMaxWidth(Region.USE_PREF_SIZE);
+        effectsSlider.setMinWidth(30);
+        effectsSlider.setValue(gameStage.switchEffect.getVolume() * 100);
+        gameStage.switchEffect.volumeProperty().bind(effectsSlider.valueProperty().divide(100));
+        gameStage.wrongMove.volumeProperty().bind(effectsSlider.valueProperty().divide(100));
+        effectsHbox.setAlignment(Pos.CENTER);
+        
+        Label effects = new Label("Effects volume: ");
+        effects.setFont(new Font("Arial", 20));
+        effects.setTextFill(Color.web("#ffffff"));
+        effects.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 5.0 , 0 , 0 )");
+        effectsHbox.getChildren().addAll(effects, effectsSlider);
+        // EFFECTS SLIDER END //
+        
+        volumes.setPadding(new Insets(80, 0, 0, 0));
+        volumes.setSpacing(20);
+        volumes.getChildren().addAll(volumeHbox, effectsHbox);
+        
+        HBox hbox = new HBox();
+        Image homeImage = new Image("images/goback.png");
+        ImageView homeBtn = new ImageView(homeImage);
+        homeBtn.setFitHeight(75);
+        homeBtn.setFitWidth(250);
+
+        hbox.setSpacing(20);
+        hbox.getChildren().addAll(homeBtn);
+        hbox.setAlignment(Pos.BOTTOM_CENTER);
+        hbox.setPadding(new Insets(30, 40, 60, 30));
+
+        vbox.setSpacing(40);
+        vbox.getChildren().addAll(closePane, volumes, hbox);
+
+        pane.getChildren().addAll(pauseBg, vbox);
+
+        this.setScene(scene);
+        this.initStyle(StageStyle.TRANSPARENT);
+
+        closeButton.setOnMouseClicked(e -> {
+            main.buttonPlay();
+            this.close();
+        });
+
+        homeBtn.setOnMouseClicked(e -> {
+            main.buttonPlay();            
+            this.close();
+        });
+        
+        scene.setOnKeyPressed(e -> {
+            if (e.getCode().equals(KeyCode.ESCAPE)) {
+                this.close();
+            }
+        });
+    }
 }
 
 class nextLevelStage extends Stage {
@@ -494,6 +596,8 @@ class gameStage extends Stage {
     public static ImagePane firstLevel;
     public static int moveInLevel;
     public static MediaPlayer levelSound;
+    public static MediaPlayer switchEffect;
+    public static MediaPlayer wrongMove;
     gameStage() {
 
         firstLevel = new ImagePane();
@@ -505,7 +609,9 @@ class gameStage extends Stage {
         
         try {
             levelSound = new MediaPlayer(new Media(this.getClass().getResource("musics/level"+(main.level + 1) + ".mp3").toExternalForm()));
-            levelSound.setVolume(0.2);
+            wrongMove = new MediaPlayer(new Media(this.getClass().getResource("musics/wrongMove.wav").toExternalForm()));
+            switchEffect = new MediaPlayer(new Media(this.getClass().getResource("musics/switch.wav").toExternalForm()));
+            levelSound.setVolume(main.mainSound.getVolume());
         } catch (Exception e) {
             System.out.println("error");
         }
@@ -523,7 +629,7 @@ class gameStage extends Stage {
     }
     public void startMusic(){
         levelSound = new MediaPlayer(new Media(this.getClass().getResource("musics/level"+(main.level + 1) + ".mp3").toExternalForm()));
-        levelSound.setVolume(0.2);
+        levelSound.setVolume(main.mainSound.getVolume());
         levelSound.play();
     }
     public void stopMusic(){
@@ -595,7 +701,12 @@ public class main extends Application {
             mainSound.stop();
             lvlStage.startMusic();
         });
-
+        
+        button2.setOnMouseClicked(e -> {
+            main.buttonPlay();
+            settingsStage settings = new settingsStage();
+            settings.show();
+        });
     }
 
     public static void buttonPlay(){
