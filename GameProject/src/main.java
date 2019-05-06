@@ -1,13 +1,17 @@
 
 import java.io.File;
 import java.util.Scanner;
+import javafx.animation.KeyFrame;
 import javafx.animation.PathTransition;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -96,8 +100,14 @@ class pipeImages extends ImageView {
                     pt.play();
                     pt.setOnFinished(eh -> {
                         System.out.println("Bitti");
-                        nextLevelStage nextLvl = new nextLevelStage();
-                        nextLvl.show();
+                        if(main.level < main.levels.length-1){
+                            nextLevelStage nextLvl = new nextLevelStage();
+                            nextLvl.show();
+                        }
+                        else{
+                            endGame end = new endGame();
+                            end.show();
+                        }
                         /*main.readInput(main.levels[++main.level]);
                                 main.lvlStage.changeTitle();
                                 gameStage.firstLevel.print();
@@ -319,6 +329,57 @@ class ImagePane extends Pane {
             }
         }
         this.getChildren().add(main.mushroom); // to be top of pipes as image, this should be added in pane later.
+    }
+}
+
+class endGame extends Stage{
+    endGame(){
+        
+        StackPane pane = new StackPane();
+        Scene scene = new Scene(pane, 660, 475);
+        scene.setFill(Color.TRANSPARENT);
+        pane.setBackground(Background.EMPTY);
+
+        Image bg = new Image("images/endOfGame.png");
+        ImageView endOfGame = new ImageView(bg);
+        
+        VBox vbox = new VBox();
+        HBox hbox = new HBox();
+        Image continueImg = new Image("images/continue.png");
+        ImageView continueBtn = new ImageView(continueImg);
+        continueBtn.setFitHeight(75);
+        continueBtn.setFitWidth(250);
+        
+        Label music = new Label("Nickname: ");
+        music.setFont(new Font("Arial", 20));
+        music.setTextFill(Color.web("#ffffff"));
+        music.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 5.0 , 0 , 0 )");
+        TextField text= new TextField();
+        
+        hbox.setSpacing(20);
+        hbox.getChildren().addAll(music, text);
+        hbox.setAlignment(Pos.BOTTOM_CENTER);
+        
+
+        vbox.setAlignment(Pos.BOTTOM_CENTER);
+        vbox.setSpacing(40);
+        vbox.setPadding(new Insets(30,30,60,30));
+        vbox.getChildren().addAll(hbox, continueBtn);
+
+        pane.getChildren().addAll(endOfGame, vbox);
+
+        this.setScene(scene);
+        this.initStyle(StageStyle.TRANSPARENT);
+        
+        continueBtn.setOnMouseClicked(e -> {
+            writeLeaderBoard(text.getText(), main.totalMove);
+            creditsStage credits = new creditsStage();
+            credits.show();
+            this.close();
+        });
+    }
+    public void writeLeaderBoard(String nick, int score){
+        System.out.println(nick + " " + score);
     }
 }
 class pauseStage extends Stage {
@@ -647,6 +708,7 @@ public class main extends Application {
     public static gameStage lvlStage;
     public static MediaPlayer mainSound;
     public static MediaPlayer buttonSound;
+    
     @Override
     public void start(Stage primaryStage) {
 
@@ -683,7 +745,7 @@ public class main extends Application {
         vbox.setAlignment(Pos.CENTER);
 
         root.getChildren().addAll(background, vbox);
-
+        
         Scene mainScene = new Scene(root, 1138, 480);
         primaryStage.setTitle("Game Project");
         primaryStage.setScene(mainScene);
@@ -796,4 +858,99 @@ public class main extends Application {
         return null;
     }
     
+}
+
+class creditsStage extends Stage{
+    
+    Timeline animation;
+    
+    creditsStage(){
+
+        Pane root = new Pane();
+        Scene creditsScene = new Scene(root, 1138, 480);
+        Image backgroundImg = new Image("images/bg-2.gif");
+        ImageView background = new ImageView(backgroundImg);
+        Image creditsImage = new Image("images/credits_text.png");
+        ImageView credits_text = new ImageView(creditsImage);   
+        credits_text.setY(creditsScene.getHeight());
+        
+        animation = new Timeline(
+        new KeyFrame(Duration.millis(20), e -> {
+            if(credits_text.getY() == -creditsImage.getHeight()){
+                animation.stop();
+                
+                finished();
+            }
+            credits_text.setY(credits_text.getY() - 1);
+        }));
+        animation.setCycleCount(Timeline.INDEFINITE);
+        animation.play();
+        /*
+        TranslateTransition transition = new TranslateTransition();
+        transition.setDuration(Duration.seconds(20));
+        transition.setToY(-creditsImage.getHeight()*2);
+        transition.setNode(credits_text);
+        transition.setCycleCount(1);
+        transition.setAutoReverse(false);
+        transition.play();
+        transition.setOnFinished(e -> {
+            System.gc();
+            transition.stop();
+            main.level = 0;
+            main.totalMove = 0;
+            gameStage.moveInLevel = 0;
+            main.lvlStage.close();
+            this.close();
+            main mainMenu = new main();
+            mainMenu.start(new Stage());
+            
+        });*/
+        
+        root.getChildren().addAll(background, credits_text);
+        this.setScene(creditsScene);
+        
+        creditsScene.setOnKeyPressed(e -> {
+            finished();
+        });
+    }
+    
+    private void finished(){
+
+            main.level = 0;
+            main.totalMove = 0;
+            gameStage.moveInLevel = 0;
+            main.lvlStage.close();
+            this.close();
+            
+            Stage backMain = new Stage();
+            StackPane stackPane = new StackPane();
+            
+            VBox vbox = new VBox();
+            
+            
+            Label text = new Label("Do you want to go back main menu?");
+            Button yes = new Button("Yes");
+            Button no = new Button("No");
+            
+            HBox hbox = new HBox();
+            hbox.getChildren().addAll(yes,no);
+            hbox.setAlignment(Pos.CENTER);
+            vbox.getChildren().addAll(text, hbox);
+            vbox.setAlignment(Pos.CENTER);
+            vbox.setSpacing(30);
+            stackPane.getChildren().add(vbox);
+            Scene backToMain = new Scene(stackPane, 300, 200);
+            backMain.setScene(backToMain);
+            
+            yes.setOnAction(e -> {
+                backMain.close();
+                main mainMenu = new main();
+                mainMenu.start(new Stage());
+            });
+            no.setOnAction(e -> {
+                System.exit(0);
+            });
+            
+            backMain.show();
+    }
 }
