@@ -1,5 +1,11 @@
 
+import com.sun.javafx.scene.control.behavior.ButtonBehavior;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import static java.util.Collections.list;
 import java.util.Scanner;
 import javafx.animation.KeyFrame;
 import javafx.animation.PathTransition;
@@ -45,7 +51,7 @@ class pipeImages extends ImageView {
     public boolean isLevelFinished;
     public Path path = new Path();
     public int pathIndex;
-    
+
     //no arg cons ekle
     pipeImages() {
 
@@ -100,11 +106,10 @@ class pipeImages extends ImageView {
                     pt.play();
                     pt.setOnFinished(eh -> {
                         System.out.println("Bitti");
-                        if(main.level < main.levels.length-1){
+                        if (main.level < main.levels.length - 1) {
                             nextLevelStage nextLvl = new nextLevelStage();
                             nextLvl.show();
-                        }
-                        else{
+                        } else {
                             endGame end = new endGame();
                             end.show();
                         }
@@ -114,8 +119,7 @@ class pipeImages extends ImageView {
                          */
                     });
                 }
-            }
-            else{
+            } else {
                 wrongMove();
             }
         });
@@ -289,12 +293,13 @@ class pipeImages extends ImageView {
             isLevelFinished = true;
         }
     }
-    
-    public void switchSound(){
+
+    public void switchSound() {
         gameStage.switchEffect.stop();
         gameStage.switchEffect.play();
     }
-    public void wrongMove(){
+
+    public void wrongMove() {
         gameStage.wrongMove.stop();
         gameStage.wrongMove.play();
     }
@@ -332,9 +337,10 @@ class ImagePane extends Pane {
     }
 }
 
-class endGame extends Stage{
-    endGame(){
-        
+class endGame extends Stage {
+
+    endGame() {
+
         StackPane pane = new StackPane();
         Scene scene = new Scene(pane, 660, 475);
         scene.setFill(Color.TRANSPARENT);
@@ -342,35 +348,34 @@ class endGame extends Stage{
 
         Image bg = new Image("images/endOfGame.png");
         ImageView endOfGame = new ImageView(bg);
-        
+
         VBox vbox = new VBox();
         HBox hbox = new HBox();
         Image continueImg = new Image("images/continue.png");
         ImageView continueBtn = new ImageView(continueImg);
         continueBtn.setFitHeight(75);
         continueBtn.setFitWidth(250);
-        
+
         Label music = new Label("Nickname: ");
         music.setFont(new Font("Arial", 20));
         music.setTextFill(Color.web("#ffffff"));
         music.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 5.0 , 0 , 0 )");
-        TextField text= new TextField();
-        
+        TextField text = new TextField();
+
         hbox.setSpacing(20);
         hbox.getChildren().addAll(music, text);
         hbox.setAlignment(Pos.BOTTOM_CENTER);
-        
 
         vbox.setAlignment(Pos.BOTTOM_CENTER);
         vbox.setSpacing(40);
-        vbox.setPadding(new Insets(30,30,60,30));
+        vbox.setPadding(new Insets(30, 30, 60, 30));
         vbox.getChildren().addAll(hbox, continueBtn);
 
         pane.getChildren().addAll(endOfGame, vbox);
 
         this.setScene(scene);
         this.initStyle(StageStyle.TRANSPARENT);
-        
+
         continueBtn.setOnMouseClicked(e -> {
             writeLeaderBoard(text.getText(), main.totalMove);
             creditsStage credits = new creditsStage();
@@ -378,10 +383,21 @@ class endGame extends Stage{
             this.close();
         });
     }
-    public void writeLeaderBoard(String nick, int score){
+
+    public void writeLeaderBoard(String nick, int score) {
+        try {
+            PrintWriter file = new PrintWriter(new FileWriter("src/leaderboard.txt", true));
+
+            file.println(score + " " + nick);
+
+            file.close();
+        } catch (Exception e) {
+
+        }
         System.out.println(nick + " " + score);
     }
 }
+
 class pauseStage extends Stage {
 
     public pauseStage() {
@@ -478,9 +494,9 @@ class settingsStage extends Stage {
         closePane.getChildren().add(closeButton);
         closePane.setAlignment(Pos.TOP_RIGHT);
         closePane.setPadding(new Insets(60, 50, 0, 0));
-        
+
         VBox volumes = new VBox();
-        
+
         // MAIN MUSIC SLIDER START //
         HBox volumeHbox = new HBox();
         Slider musicVol = new Slider();
@@ -491,14 +507,14 @@ class settingsStage extends Stage {
         main.mainSound.volumeProperty().bind(musicVol.valueProperty().divide(200));
         gameStage.levelSound.volumeProperty().bind(musicVol.valueProperty().divide(200));
         volumeHbox.setAlignment(Pos.CENTER);
-        
+
         Label music = new Label("Music volume: ");
         music.setFont(new Font("Arial", 20));
         music.setTextFill(Color.web("#ffffff"));
         music.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 5.0 , 0 , 0 )");
         volumeHbox.getChildren().addAll(music, musicVol);
         //MAIN MUSIC SLIDER END //
-        
+
         // EFFECTS SLIDER START //
         HBox effectsHbox = new HBox();
         Slider effectsSlider = new Slider();
@@ -509,18 +525,18 @@ class settingsStage extends Stage {
         gameStage.switchEffect.volumeProperty().bind(effectsSlider.valueProperty().divide(100));
         gameStage.wrongMove.volumeProperty().bind(effectsSlider.valueProperty().divide(100));
         effectsHbox.setAlignment(Pos.CENTER);
-        
+
         Label effects = new Label("Effects volume: ");
         effects.setFont(new Font("Arial", 20));
         effects.setTextFill(Color.web("#ffffff"));
         effects.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 5.0 , 0 , 0 )");
         effectsHbox.getChildren().addAll(effects, effectsSlider);
         // EFFECTS SLIDER END //
-        
+
         volumes.setPadding(new Insets(80, 0, 0, 0));
         volumes.setSpacing(20);
         volumes.getChildren().addAll(volumeHbox, effectsHbox);
-        
+
         HBox hbox = new HBox();
         Image homeImage = new Image("images/goback.png");
         ImageView homeBtn = new ImageView(homeImage);
@@ -546,10 +562,10 @@ class settingsStage extends Stage {
         });
 
         homeBtn.setOnMouseClicked(e -> {
-            main.buttonPlay();            
+            main.buttonPlay();
             this.close();
         });
-        
+
         scene.setOnKeyPressed(e -> {
             if (e.getCode().equals(KeyCode.ESCAPE)) {
                 this.close();
@@ -562,10 +578,11 @@ class nextLevelStage extends Stage {
 
     double x, y;
     public static MediaPlayer winSound;
+
     public nextLevelStage() {
         gameStage.levelSound.stop();
         playMusic();
-        
+
         StackPane pane = new StackPane();
         Scene scene = new Scene(pane, 660, 475);
         scene.setFill(Color.TRANSPARENT);
@@ -640,14 +657,15 @@ class nextLevelStage extends Stage {
             mainMenu.start(new Stage());
         });
     }
-    public void playMusic(){
+
+    public void playMusic() {
         try {
             winSound = new MediaPlayer(new Media(this.getClass().getResource("musics/levelCompleted.wav").toExternalForm()));
             winSound.setVolume(0.2);
             winSound.play();
         } catch (Exception e) {
             System.out.println("error");
-        }  
+        }
 
     }
 }
@@ -659,6 +677,7 @@ class gameStage extends Stage {
     public static MediaPlayer levelSound;
     public static MediaPlayer switchEffect;
     public static MediaPlayer wrongMove;
+
     gameStage() {
 
         firstLevel = new ImagePane();
@@ -667,16 +686,16 @@ class gameStage extends Stage {
         this.setTitle("Level " + (main.level + 1));
         main.readInput(main.levels[main.level]);
         firstLevel.print();
-        
+
         try {
-            levelSound = new MediaPlayer(new Media(this.getClass().getResource("musics/level"+(main.level + 1) + ".mp3").toExternalForm()));
+            levelSound = new MediaPlayer(new Media(this.getClass().getResource("musics/level" + (main.level + 1) + ".mp3").toExternalForm()));
             wrongMove = new MediaPlayer(new Media(this.getClass().getResource("musics/wrongMove.wav").toExternalForm()));
             switchEffect = new MediaPlayer(new Media(this.getClass().getResource("musics/switch.wav").toExternalForm()));
             levelSound.setVolume(main.mainSound.getVolume());
         } catch (Exception e) {
             System.out.println("error");
         }
-        
+
         scene.setOnKeyPressed(e -> {
             if (e.getCode().equals(KeyCode.ESCAPE)) {
                 pauseStage pause = new pauseStage();
@@ -688,12 +707,14 @@ class gameStage extends Stage {
     public void changeTitle() {
         this.setTitle("Level " + (main.level + 1));
     }
-    public void startMusic(){
-        levelSound = new MediaPlayer(new Media(this.getClass().getResource("musics/level"+(main.level + 1) + ".mp3").toExternalForm()));
+
+    public void startMusic() {
+        levelSound = new MediaPlayer(new Media(this.getClass().getResource("musics/level" + (main.level + 1) + ".mp3").toExternalForm()));
         levelSound.setVolume(main.mainSound.getVolume());
         levelSound.play();
     }
-    public void stopMusic(){
+
+    public void stopMusic() {
         levelSound.stop();
     }
 }
@@ -708,7 +729,7 @@ public class main extends Application {
     public static gameStage lvlStage;
     public static MediaPlayer mainSound;
     public static MediaPlayer buttonSound;
-    
+
     @Override
     public void start(Stage primaryStage) {
 
@@ -717,15 +738,16 @@ public class main extends Application {
             mainSound = new MediaPlayer(new Media(this.getClass().getResource("musics/mainScene.mp3").toExternalForm()));
             mainSound.setVolume(0.2);
             mainSound.play();
-            
+
             buttonSound = new MediaPlayer(new Media(this.getClass().getResource("musics/menuNavigate.wav").toExternalForm()));
             buttonSound.setVolume(0.2);
-            
+
         } catch (Exception e) {
             System.out.println("error");
         }
-
         StackPane root = new StackPane();
+        Scene mainScene = new Scene(root, 1138, 480);
+        
         Image bgImage = new Image("images/bg.gif");
         ImageView background = new ImageView(bgImage);
 
@@ -741,12 +763,28 @@ public class main extends Application {
         button2.setFitHeight(75);
         button2.setFitWidth(300);
 
-        vbox.getChildren().addAll(startButton, button2);
-        vbox.setAlignment(Pos.CENTER);
+        HBox bottomHBox = new HBox();
+        HBox leaderboardHbox = new HBox();
+        Image leaderImg = new Image("images/cup.png");
+        ImageView leaderBtn = new ImageView(leaderImg);
+        leaderBtn.setFitHeight(75);
+        leaderBtn.setFitWidth(75);
+        leaderboardHbox.getChildren().add(leaderBtn);
+        
+        Image creditsImg = new Image("images/credits.png");
+        ImageView creditsBtn = new ImageView(creditsImg);
+        creditsBtn.setFitHeight(75);
+        creditsBtn.setFitWidth(300);
+        
+        bottomHBox.setAlignment(Pos.BOTTOM_RIGHT);
+        bottomHBox.setPadding(new Insets(0,10,5,0));
+        bottomHBox.getChildren().addAll(leaderboardHbox);
+        
+        vbox.setAlignment(Pos.BOTTOM_CENTER);
+        vbox.getChildren().addAll(startButton, button2, creditsBtn, bottomHBox);
 
         root.getChildren().addAll(background, vbox);
-        
-        Scene mainScene = new Scene(root, 1138, 480);
+
         primaryStage.setTitle("Game Project");
         primaryStage.setScene(mainScene);
         primaryStage.show();
@@ -763,18 +801,33 @@ public class main extends Application {
             mainSound.stop();
             lvlStage.startMusic();
         });
-        
+
         button2.setOnMouseClicked(e -> {
             main.buttonPlay();
             settingsStage settings = new settingsStage();
             settings.show();
         });
+        
+        creditsBtn.setOnMouseClicked(e -> {
+            main.buttonPlay();
+            creditsStage credits = new creditsStage();
+            credits.show();
+            primaryStage.close();
+        });
+        
+        leaderBtn.setOnMouseClicked(e -> {
+            main.buttonPlay();
+            LeaderBoard leaderBoard = new LeaderBoard();
+            leaderBoard.show();
+            primaryStage.close();
+        });
     }
 
-    public static void buttonPlay(){
+    public static void buttonPlay() {
         main.buttonSound.stop();
         main.buttonSound.play();
     }
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -857,32 +910,68 @@ public class main extends Application {
         }
         return null;
     }
-    
+
+    /*private void sortLeaderBoard() {
+        ArrayList<String> leaderboard = new ArrayList<>();
+
+        Scanner sc = null;
+        try {
+            sc = new Scanner(new File("src/leaderboard.txt"));
+        } catch (Exception e) {
+
+        }
+        while (sc.hasNextLine()) {
+            leaderboard.add(sc.nextLine());
+        }
+
+        ArrayList<Integer> scores = new ArrayList<>();
+        ArrayList<String> nicks = new ArrayList<>();
+        for (int i = 0; i < leaderboard.size(); i++) {
+            scores.add(Integer.parseInt(leaderboard.get(i).split(" ")[0]));
+        }
+        System.out.println(leaderboard);
+        System.out.println(scores);
+        Collections.sort(scores);
+        System.out.println(leaderboard);
+        System.out.println(scores);
+
+        for (int i = 0; i < leaderboard.size(); i++) {
+            for (int j = 0; j < leaderboard.size(); j++) {
+                if (Integer.parseInt(leaderboard.get(j).split(" ")[0]) == scores.get(i)) {
+                    if (!nicks.contains(leaderboard.get(j).split(" ")[1])) {
+                        nicks.add(leaderboard.get(j).split(" ")[1]);
+                    }
+                }
+            }
+        }
+        System.out.println(nicks);
+    }*/
+
 }
 
-class creditsStage extends Stage{
-    
+class creditsStage extends Stage {
+
     Timeline animation;
-    
-    creditsStage(){
+
+    creditsStage() {
 
         Pane root = new Pane();
         Scene creditsScene = new Scene(root, 1138, 480);
-        Image backgroundImg = new Image("images/bg-2.gif");
+        Image backgroundImg = new Image("images/bg.gif");
         ImageView background = new ImageView(backgroundImg);
         Image creditsImage = new Image("images/credits_text.png");
-        ImageView credits_text = new ImageView(creditsImage);   
+        ImageView credits_text = new ImageView(creditsImage);
         credits_text.setY(creditsScene.getHeight());
-        
+
         animation = new Timeline(
-        new KeyFrame(Duration.millis(20), e -> {
-            if(credits_text.getY() == -creditsImage.getHeight()){
-                animation.stop();
-                
-                finished();
-            }
-            credits_text.setY(credits_text.getY() - 1);
-        }));
+                new KeyFrame(Duration.millis(20), e -> {
+                    if (credits_text.getY() == -creditsImage.getHeight()) {
+                        animation.stop();
+
+                        finished();
+                    }
+                    credits_text.setY(credits_text.getY() - 1);
+                }));
         animation.setCycleCount(Timeline.INDEFINITE);
         animation.play();
         /*
@@ -905,52 +994,156 @@ class creditsStage extends Stage{
             mainMenu.start(new Stage());
             
         });*/
-        
+
         root.getChildren().addAll(background, credits_text);
         this.setScene(creditsScene);
-        
+
         creditsScene.setOnKeyPressed(e -> {
             finished();
         });
     }
-    
-    private void finished(){
 
-            main.level = 0;
-            main.totalMove = 0;
-            gameStage.moveInLevel = 0;
-            main.lvlStage.close();
+    private void finished() {
+
+        main.level = 0;
+        main.totalMove = 0;
+        gameStage.moveInLevel = 0;
+        main.lvlStage.close();
+        this.close();
+
+        Stage backMain = new Stage();
+        StackPane stackPane = new StackPane();
+
+        VBox vbox = new VBox();
+
+        Label text = new Label("Do you want to go back main menu?");
+        Button yes = new Button("Yes");
+        Button no = new Button("No");
+
+        HBox hbox = new HBox();
+        hbox.getChildren().addAll(yes, no);
+        hbox.setAlignment(Pos.CENTER);
+        vbox.getChildren().addAll(text, hbox);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setSpacing(30);
+        stackPane.getChildren().add(vbox);
+        Scene backToMain = new Scene(stackPane, 300, 200);
+        backMain.setScene(backToMain);
+
+        yes.setOnAction(e -> {
+            backMain.close();
+            main mainMenu = new main();
+            mainMenu.start(new Stage());
+        });
+        no.setOnAction(e -> {
+            System.exit(0);
+        });
+
+        backMain.show();
+    }
+}
+
+class LeaderBoard extends Stage {
+    String scoresText = "";
+    String nicksText = "";
+    
+    public LeaderBoard() {
+        
+        sortLeaderBoard();
+        StackPane root = new StackPane();
+        Scene creditsScene = new Scene(root, 1138, 480);
+        Image backgroundImg = new Image("images/bg.gif");
+        ImageView background = new ImageView(backgroundImg);
+        
+        Image homeImage = new Image("images/goback.png");
+        ImageView homeBtn = new ImageView(homeImage);
+        homeBtn.setFitHeight(75);
+        homeBtn.setFitWidth(250);
+        
+        VBox mainVBox = new VBox();
+        HBox hbox = new HBox();
+        VBox scores = new VBox();
+        VBox nicks = new VBox();
+        
+        Label nickname = new Label("Nickname\n\n");
+        nickname.setFont(new Font("Arial", 24));
+        nickname.setUnderline(true);
+        nickname.setTextFill(Color.web("#ffffff"));
+        nickname.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 5.0 , 0 , 0 )");
+        
+        Label score = new Label("Score\n\n");
+        score.setFont(new Font("Arial", 24));
+        score.setUnderline(true);
+        score.setTextFill(Color.web("#ffffff"));
+        score.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 5.0 , 0 , 0 )");
+        
+        Label scoreList = new Label(scoresText);
+        scoreList.setFont(new Font("Arial", 20));
+        scoreList.setTextFill(Color.web("#ffffff"));
+        scoreList.setStyle("-fx-effect: dropshadow( gaussian , rgba(0,0,0,0.5) , 10,0.8,0,0)");
+        
+        Label nickList = new Label(nicksText);
+        nickList.setFont(new Font("Arial", 20));
+        nickList.setTextFill(Color.web("#ffffff"));
+        nickList.setStyle("-fx-effect: dropshadow( gaussian , rgba(0,0,0,0.5) , 10,0.8,0,0)");
+        
+        scores.setAlignment(Pos.TOP_CENTER);
+        nicks.setAlignment(Pos.TOP_CENTER);
+        hbox.setAlignment(Pos.TOP_CENTER);
+        mainVBox.setAlignment(Pos.BOTTOM_RIGHT);
+        
+        hbox.setSpacing(30);
+        
+        scores.getChildren().addAll(score, scoreList);
+        nicks.getChildren().addAll(nickname, nickList);
+        hbox.getChildren().addAll(nicks, scores);
+        mainVBox.getChildren().addAll(hbox, homeBtn);
+        root.getChildren().addAll(background, mainVBox);
+        
+        this.setScene(creditsScene);
+        
+        homeBtn.setOnMouseClicked(e -> {
             this.close();
-            
-            Stage backMain = new Stage();
-            StackPane stackPane = new StackPane();
-            
-            VBox vbox = new VBox();
-            
-            
-            Label text = new Label("Do you want to go back main menu?");
-            Button yes = new Button("Yes");
-            Button no = new Button("No");
-            
-            HBox hbox = new HBox();
-            hbox.getChildren().addAll(yes,no);
-            hbox.setAlignment(Pos.CENTER);
-            vbox.getChildren().addAll(text, hbox);
-            vbox.setAlignment(Pos.CENTER);
-            vbox.setSpacing(30);
-            stackPane.getChildren().add(vbox);
-            Scene backToMain = new Scene(stackPane, 300, 200);
-            backMain.setScene(backToMain);
-            
-            yes.setOnAction(e -> {
-                backMain.close();
-                main mainMenu = new main();
-                mainMenu.start(new Stage());
-            });
-            no.setOnAction(e -> {
-                System.exit(0);
-            });
-            
-            backMain.show();
+            main mainMenu = new main();
+            mainMenu.start(new Stage());
+        });
+    }
+
+    private void sortLeaderBoard() {
+        ArrayList<String> leaderboard = new ArrayList<>();
+
+        Scanner sc = null;
+        try {
+            sc = new Scanner(new File("src/leaderboard.txt"));
+        } catch (Exception e) {
+
+        }
+        while (sc.hasNextLine()) {
+            leaderboard.add(sc.nextLine());
+        }
+
+        ArrayList<Integer> scores = new ArrayList<>();
+        ArrayList<String> nicks = new ArrayList<>();
+        
+        for (int i = 0; i < leaderboard.size(); i++) {
+            scores.add(Integer.parseInt(leaderboard.get(i).split(" ")[0]));
+        }
+
+        Collections.sort(scores);
+
+        for (int i = 0; i < leaderboard.size(); i++) {
+            for (int j = 0; j < leaderboard.size(); j++) {
+                if (Integer.parseInt(leaderboard.get(j).split(" ")[0]) == scores.get(i)) {
+                    if (!nicks.contains(leaderboard.get(j).split(" ")[1])) {
+                        nicks.add(leaderboard.get(j).split(" ")[1]);
+                    }
+                }
+            }
+        }
+        
+        for(int i = 0; i < scores.size(); i++){
+            scoresText += scores.get(i) + "\n";
+            nicksText += (i+1) + ". " + nicks.get(i) + "\n";
+        }
     }
 }
