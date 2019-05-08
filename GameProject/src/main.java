@@ -52,7 +52,7 @@ class pipeImages extends ImageView {
     public Path path = new Path();
     public int pathIndex;
     double initialSceneX, initialSceneY, initialTranslateX, initialTranslateY;
-
+    
     //no arg cons ekle
     pipeImages() {
 
@@ -70,11 +70,15 @@ class pipeImages extends ImageView {
         });
         
         setOnMouseDragged(e -> {
-            
+            if (!this.direction.equals("PipeStatic")
+                && !this.direction.equals("Starter")
+                && !this.direction.equals("End")
+                && !this.type.equals("Free")) {
+                
             this.setX(e.getX()-this.getFitWidth()/2);
-            //this.setX(initial_index_X*100 + (e.getSceneX() - this.getX()));
             this.setY(e.getY()-this.getFitHeight()/2);
             this.toFront();
+            }
             
         });
 
@@ -480,6 +484,7 @@ class pauseStage extends Stage {
             main.mainSound.play();
             main.lvlStage.close();
             this.close();
+            main.lvlStage = new gameStage();
             main.mainStage.show();
             //main mainMenu = new main();
             //mainMenu.start(new Stage());
@@ -676,6 +681,7 @@ class nextLevelStage extends Stage {
             main.lvlStage.close();
             this.close();
             main.mainStage.show();
+            main.lvlStage = new gameStage();
             //main mainMenu = new main();
             //mainMenu.start(new Stage());
         });
@@ -1066,6 +1072,7 @@ class creditsStage extends Stage {
             animation.stop();
             credits_text.setY(creditsScene.getHeight());
             backMain.close();
+            main.lvlStage = new gameStage();
             main.mainStage.show();
             //main mainMenu = new main();
             //mainMenu.start(new Stage());
@@ -1087,7 +1094,7 @@ class LeaderBoard extends Stage {
         sortLeaderBoard();
         StackPane root = new StackPane();
         Scene creditsScene = new Scene(root, 1138, 480);
-        Image backgroundImg = new Image("images/bg.gif");
+        Image backgroundImg = new Image("images/bg.jpg");
         ImageView background = new ImageView(backgroundImg);
         
         Image homeImage = new Image("images/goback.png");
