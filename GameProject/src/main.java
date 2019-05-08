@@ -51,6 +51,7 @@ class pipeImages extends ImageView {
     public boolean isLevelFinished;
     public Path path = new Path();
     public int pathIndex;
+    double initialSceneX, initialSceneY, initialTranslateX, initialTranslateY;
 
     //no arg cons ekle
     pipeImages() {
@@ -61,12 +62,20 @@ class pipeImages extends ImageView {
         super(image);
         this.type = type;
         this.direction = direction;
-
         setOnMousePressed(e -> {
-
+            
             initial_index_X = (int) (e.getSceneY() / 100);
             initial_index_Y = (int) (e.getSceneX() / 100);
 
+        });
+        
+        setOnMouseDragged(e -> {
+            
+            this.setX(e.getX()-this.getFitWidth()/2);
+            //this.setX(initial_index_X*100 + (e.getSceneX() - this.getX()));
+            this.setY(e.getY()-this.getFitHeight()/2);
+            this.toFront();
+            
         });
 
         setOnMouseReleased(e -> {
@@ -75,15 +84,17 @@ class pipeImages extends ImageView {
             final_index_Y = (int) (e.getSceneX() / 100);
             if (canMove(initial_index_X, initial_index_Y, final_index_X, final_index_Y) && !isFinished()) {
 
-                int temp_X = (int) (main.images[initial_index_X][initial_index_Y].getX());
-                int temp_Y = (int) (main.images[initial_index_X][initial_index_Y].getY());
+                //int temp_X = (int) (main.images[initial_index_X][initial_index_Y].getX());
+                //int temp_Y = (int) (main.images[initial_index_X][initial_index_Y].getY());
 
                 //Kordinatlarının yer değiştirmesi
                 main.images[initial_index_X][initial_index_Y].setX(main.images[final_index_X][final_index_Y].getX());
                 main.images[initial_index_X][initial_index_Y].setY(main.images[final_index_X][final_index_Y].getY());
-                main.images[final_index_X][final_index_Y].setX(temp_X);
-                main.images[final_index_X][final_index_Y].setY(temp_Y);
-
+                //main.images[final_index_X][final_index_Y].setX(temp_X);
+                //main.images[final_index_X][final_index_Y].setY(temp_Y);
+                main.images[final_index_X][final_index_Y].setX(initial_index_Y*100);
+                main.images[final_index_X][final_index_Y].setY(initial_index_X * 100);
+                
                 switchSound();
                 //Array içinde de değişiklik yapmamız gerekiyor
                 pipeImages temp = main.images[initial_index_X][initial_index_Y];
@@ -102,6 +113,7 @@ class pipeImages extends ImageView {
                     pt.setDuration(Duration.millis(4000));
                     pt.setPath(path);
                     pt.setNode(main.mushroom);
+                    main.mushroom.toFront();
                     pt.setAutoReverse(false);
                     pt.play();
                     pt.setOnFinished(eh -> {
@@ -121,6 +133,8 @@ class pipeImages extends ImageView {
                 }
             } else {
                 wrongMove();
+                this.setX(initial_index_Y*100);
+                this.setY(initial_index_X*100);
             }
         });
     }
@@ -323,6 +337,10 @@ class ImagePane extends Pane {
     }
 
     public void print() {
+        ImageView bg = new ImageView(new Image("images/emptyBg.png"));
+        bg.setFitHeight(400);
+        bg.setFitWidth(400);
+        this.getChildren().add(bg);
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 this.getChildren().add(main.images[i][j]);
@@ -458,10 +476,13 @@ class pauseStage extends Stage {
             main.level = 0;
             main.totalMove = 0;
             gameStage.moveInLevel = 0;
+            main.lvlStage.stopMusic();
+            main.mainSound.play();
             main.lvlStage.close();
             this.close();
-            main mainMenu = new main();
-            mainMenu.start(new Stage());
+            main.mainStage.show();
+            //main mainMenu = new main();
+            //mainMenu.start(new Stage());
         });
         scene.setOnKeyPressed(e -> {
             if (e.getCode().equals(KeyCode.ESCAPE)) {
@@ -539,12 +560,12 @@ class settingsStage extends Stage {
 
         HBox hbox = new HBox();
         Image homeImage = new Image("images/goback.png");
-        ImageView homeBtn = new ImageView(homeImage);
-        homeBtn.setFitHeight(75);
-        homeBtn.setFitWidth(250);
+        ImageView goBackBtn = new ImageView(homeImage);
+        goBackBtn.setFitHeight(75);
+        goBackBtn.setFitWidth(250);
 
         hbox.setSpacing(20);
-        hbox.getChildren().addAll(homeBtn);
+        hbox.getChildren().addAll(goBackBtn);
         hbox.setAlignment(Pos.BOTTOM_CENTER);
         hbox.setPadding(new Insets(30, 40, 60, 30));
 
@@ -561,7 +582,7 @@ class settingsStage extends Stage {
             this.close();
         });
 
-        homeBtn.setOnMouseClicked(e -> {
+        goBackBtn.setOnMouseClicked(e -> {
             main.buttonPlay();
             this.close();
         });
@@ -651,10 +672,12 @@ class nextLevelStage extends Stage {
             main.level = 0;
             main.totalMove = 0;
             gameStage.moveInLevel = 0;
+            main.mainSound.play();
             main.lvlStage.close();
             this.close();
-            main mainMenu = new main();
-            mainMenu.start(new Stage());
+            main.mainStage.show();
+            //main mainMenu = new main();
+            //mainMenu.start(new Stage());
         });
     }
 
@@ -729,10 +752,11 @@ public class main extends Application {
     public static gameStage lvlStage;
     public static MediaPlayer mainSound;
     public static MediaPlayer buttonSound;
-
+    public static Stage mainStage;
+    
     @Override
     public void start(Stage primaryStage) {
-
+        mainStage = primaryStage;
         // Main scene //
         try {
             mainSound = new MediaPlayer(new Media(this.getClass().getResource("musics/mainScene.mp3").toExternalForm()));
@@ -792,7 +816,7 @@ public class main extends Application {
 
         // start game //
         lvlStage = new gameStage();
-
+        
         //start game end //
         startButton.setOnMouseClicked(e -> {
             main.buttonPlay();
@@ -808,16 +832,17 @@ public class main extends Application {
             settings.show();
         });
         
+        creditsStage credits = new creditsStage();
         creditsBtn.setOnMouseClicked(e -> {
             main.buttonPlay();
-            creditsStage credits = new creditsStage();
+            creditsStage.animation.playFromStart();
             credits.show();
             primaryStage.close();
         });
         
+        LeaderBoard leaderBoard = new LeaderBoard();
         leaderBtn.setOnMouseClicked(e -> {
             main.buttonPlay();
-            LeaderBoard leaderBoard = new LeaderBoard();
             leaderBoard.show();
             primaryStage.close();
         });
@@ -951,16 +976,17 @@ public class main extends Application {
 
 class creditsStage extends Stage {
 
-    Timeline animation;
-
+    public static Timeline animation;
+    public static Scene creditsScene;
+    public static ImageView credits_text;
     creditsStage() {
 
         Pane root = new Pane();
-        Scene creditsScene = new Scene(root, 1138, 480);
+        creditsScene = new Scene(root, 1138, 480);
         Image backgroundImg = new Image("images/bg.gif");
         ImageView background = new ImageView(backgroundImg);
         Image creditsImage = new Image("images/credits_text.png");
-        ImageView credits_text = new ImageView(creditsImage);
+        credits_text = new ImageView(creditsImage);
         credits_text.setY(creditsScene.getHeight());
 
         animation = new Timeline(
@@ -974,6 +1000,9 @@ class creditsStage extends Stage {
                 }));
         animation.setCycleCount(Timeline.INDEFINITE);
         animation.play();
+        animation.setOnFinished(e -> {
+            credits_text.setY(creditsScene.getHeight());
+        });
         /*
         TranslateTransition transition = new TranslateTransition();
         transition.setDuration(Duration.seconds(20));
@@ -999,6 +1028,8 @@ class creditsStage extends Stage {
         this.setScene(creditsScene);
 
         creditsScene.setOnKeyPressed(e -> {
+            animation.stop();
+            credits_text.setY(creditsScene.getHeight());
             finished();
         });
     }
@@ -1031,9 +1062,12 @@ class creditsStage extends Stage {
         backMain.setScene(backToMain);
 
         yes.setOnAction(e -> {
+            animation.stop();
+            credits_text.setY(creditsScene.getHeight());
             backMain.close();
-            main mainMenu = new main();
-            mainMenu.start(new Stage());
+            main.mainStage.show();
+            //main mainMenu = new main();
+            //mainMenu.start(new Stage());
         });
         no.setOnAction(e -> {
             System.exit(0);
@@ -1048,7 +1082,7 @@ class LeaderBoard extends Stage {
     String nicksText = "";
     
     public LeaderBoard() {
-        
+
         sortLeaderBoard();
         StackPane root = new StackPane();
         Scene creditsScene = new Scene(root, 1138, 480);
@@ -1104,8 +1138,10 @@ class LeaderBoard extends Stage {
         
         homeBtn.setOnMouseClicked(e -> {
             this.close();
-            main mainMenu = new main();
-            mainMenu.start(new Stage());
+            main.mainStage.show();
+            
+            //main mainMenu = new main();
+            //mainMenu.start(new Stage());
         });
     }
 
