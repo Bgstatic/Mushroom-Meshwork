@@ -378,20 +378,25 @@ class endGame extends Stage {
         continueBtn.setFitHeight(75);
         continueBtn.setFitWidth(250);
 
-        Label music = new Label("Nickname: ");
-        music.setFont(new Font("Arial", 20));
-        music.setTextFill(Color.web("#ffffff"));
-        music.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 5.0 , 0 , 0 )");
+        Label nick = new Label("Nickname: ");
+        nick.setFont(new Font("Arial", 20));
+        nick.setTextFill(Color.web("#ffffff"));
+        nick.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 5.0 , 0 , 0 )");
         TextField text = new TextField();
 
         hbox.setSpacing(20);
-        hbox.getChildren().addAll(music, text);
+        hbox.getChildren().addAll(nick, text);
         hbox.setAlignment(Pos.BOTTOM_CENTER);
 
+        Label moveText = new Label("You made : " + gameStage.moveInLevel + " moves." + "(Total:" + main.totalMove + ")");
+        moveText.setFont(new Font("Arial", 26));
+        moveText.setTextFill(Color.web("#ffffff"));
+        moveText.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 5.0 , 0 , 0 )");
+
         vbox.setAlignment(Pos.BOTTOM_CENTER);
-        vbox.setSpacing(40);
+        vbox.setSpacing(17);
         vbox.setPadding(new Insets(30, 30, 60, 30));
-        vbox.getChildren().addAll(hbox, continueBtn);
+        vbox.getChildren().addAll(moveText, hbox, continueBtn);
 
         pane.getChildren().addAll(endOfGame, vbox);
 
@@ -759,7 +764,7 @@ public class main extends Application {
     public static MediaPlayer mainSound;
     public static MediaPlayer buttonSound;
     public static Stage mainStage;
-    
+    //public static ImageView background = new ImageView(new Image("images/bg.gif"));
     @Override
     public void start(Stage primaryStage) {
         mainStage = primaryStage;
@@ -812,7 +817,8 @@ public class main extends Application {
         
         vbox.setAlignment(Pos.BOTTOM_CENTER);
         vbox.getChildren().addAll(startButton, button2, creditsBtn, bottomHBox);
-
+        endGame end = new endGame();
+        end.show();
         root.getChildren().addAll(background, vbox);
 
         primaryStage.setTitle("Game Project");
@@ -838,11 +844,9 @@ public class main extends Application {
             settings.show();
         });
         
-        creditsStage credits = new creditsStage();
-        creditsStage.animation.pause();
         creditsBtn.setOnMouseClicked(e -> {
             main.buttonPlay();
-            creditsStage.animation.playFromStart();
+            creditsStage credits = new creditsStage();
             credits.show();
             primaryStage.close();
         });
@@ -990,7 +994,7 @@ class creditsStage extends Stage {
 
         Pane root = new Pane();
         creditsScene = new Scene(root, 1138, 480);
-        Image backgroundImg = new Image("images/bg.gif");
+        Image backgroundImg = new Image("images/bg.jpg");
         ImageView background = new ImageView(backgroundImg);
         Image creditsImage = new Image("images/credits_text.png");
         credits_text = new ImageView(creditsImage);
