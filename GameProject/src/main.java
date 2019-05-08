@@ -833,6 +833,7 @@ public class main extends Application {
         });
         
         creditsStage credits = new creditsStage();
+        creditsStage.animation.pause();
         creditsBtn.setOnMouseClicked(e -> {
             main.buttonPlay();
             creditsStage.animation.playFromStart();
