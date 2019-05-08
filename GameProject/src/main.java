@@ -389,12 +389,12 @@ class endGame extends Stage {
         hbox.setAlignment(Pos.BOTTOM_CENTER);
 
         Label moveText = new Label("You made : " + gameStage.moveInLevel + " moves." + "(Total:" + main.totalMove + ")");
-        moveText.setFont(new Font("Arial", 26));
+        moveText.setFont(new Font("Arial", 22));
         moveText.setTextFill(Color.web("#ffffff"));
         moveText.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 5.0 , 0 , 0 )");
 
         vbox.setAlignment(Pos.BOTTOM_CENTER);
-        vbox.setSpacing(17);
+        vbox.setSpacing(18);
         vbox.setPadding(new Insets(30, 30, 60, 30));
         vbox.getChildren().addAll(moveText, hbox, continueBtn);
 
@@ -817,8 +817,7 @@ public class main extends Application {
         
         vbox.setAlignment(Pos.BOTTOM_CENTER);
         vbox.getChildren().addAll(startButton, button2, creditsBtn, bottomHBox);
-        endGame end = new endGame();
-        end.show();
+
         root.getChildren().addAll(background, vbox);
 
         primaryStage.setTitle("Game Project");
@@ -994,7 +993,7 @@ class creditsStage extends Stage {
 
         Pane root = new Pane();
         creditsScene = new Scene(root, 1138, 480);
-        Image backgroundImg = new Image("images/bg.jpg");
+        Image backgroundImg = new Image("images/bg.gif");
         ImageView background = new ImageView(backgroundImg);
         Image creditsImage = new Image("images/credits_text.png");
         credits_text = new ImageView(creditsImage);
@@ -1098,7 +1097,7 @@ class LeaderBoard extends Stage {
         sortLeaderBoard();
         StackPane root = new StackPane();
         Scene creditsScene = new Scene(root, 1138, 480);
-        Image backgroundImg = new Image("images/bg.jpg");
+        Image backgroundImg = new Image("images/bg.gif");
         ImageView background = new ImageView(backgroundImg);
         
         Image homeImage = new Image("images/goback.png");
