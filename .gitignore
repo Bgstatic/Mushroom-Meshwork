@@ -1,0 +1,6 @@
+GameProject/build/
+GameProject/nbproject
+GameProject/test
+build.xml
+manifest.mf
+*.class
