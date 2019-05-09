@@ -13,6 +13,7 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -51,7 +52,7 @@ class pipeImages extends ImageView {
     public boolean isLevelFinished;
     public Path path = new Path();
     public int pathIndex;
-    double initialSceneX, initialSceneY, initialTranslateX, initialTranslateY;
+    public static PathTransition pt;
     
     //no arg cons ekle
     pipeImages() {
@@ -63,39 +64,37 @@ class pipeImages extends ImageView {
         this.type = type;
         this.direction = direction;
         setOnMousePressed(e -> {
-            
+            gameStage.scene.setCursor(Cursor.CLOSED_HAND);
             initial_index_X = (int) (e.getSceneY() / 100);
             initial_index_Y = (int) (e.getSceneX() / 100);
 
         });
         
         setOnMouseDragged(e -> {
-            if (!this.direction.equals("PipeStatic")
-                && !this.direction.equals("Starter")
-                && !this.direction.equals("End")
-                && !this.type.equals("Free")) {
-                
-            this.setX(e.getX()-this.getFitWidth()/2);
-            this.setY(e.getY()-this.getFitHeight()/2);
-            this.toFront();
+            if(isLevelFinished == false)
+                if (!this.direction.equals("PipeStatic")
+                    && !this.direction.equals("Starter")
+                    && !this.direction.equals("End")
+                    && !this.type.equals("Free")) {
+
+                this.setX(e.getX()-this.getFitWidth()/2);
+                this.setY(e.getY()-this.getFitHeight()/2);
+                this.toFront();
             }
             
         });
 
         setOnMouseReleased(e -> {
-
+            
+            gameStage.scene.setCursor(Cursor.OPEN_HAND);
             final_index_X = (int) (e.getSceneY() / 100);
             final_index_Y = (int) (e.getSceneX() / 100);
-            if (canMove(initial_index_X, initial_index_Y, final_index_X, final_index_Y) && !isFinished()) {
-
-                //int temp_X = (int) (main.images[initial_index_X][initial_index_Y].getX());
-                //int temp_Y = (int) (main.images[initial_index_X][initial_index_Y].getY());
+            if (final_index_X < 4 && final_index_Y < 4 && !(final_index_X < 0) && !(final_index_Y < 0)
+                    && canMove(initial_index_X, initial_index_Y, final_index_X, final_index_Y) && !isFinished()) {
 
                 //Kordinatlarının yer değiştirmesi
                 main.images[initial_index_X][initial_index_Y].setX(main.images[final_index_X][final_index_Y].getX());
                 main.images[initial_index_X][initial_index_Y].setY(main.images[final_index_X][final_index_Y].getY());
-                //main.images[final_index_X][final_index_Y].setX(temp_X);
-                //main.images[final_index_X][final_index_Y].setY(temp_Y);
                 main.images[final_index_X][final_index_Y].setX(initial_index_Y*100);
                 main.images[final_index_X][final_index_Y].setY(initial_index_X * 100);
                 
@@ -113,7 +112,7 @@ class pipeImages extends ImageView {
 
                 if (isFinished()) {
 
-                    PathTransition pt = new PathTransition();
+                    pt = new PathTransition();
                     pt.setDuration(Duration.millis(4000));
                     pt.setPath(path);
                     pt.setNode(main.mushroom);
@@ -121,7 +120,6 @@ class pipeImages extends ImageView {
                     pt.setAutoReverse(false);
                     pt.play();
                     pt.setOnFinished(eh -> {
-                        System.out.println("Bitti");
                         if (main.level < main.levels.length - 1) {
                             nextLevelStage nextLvl = new nextLevelStage();
                             nextLvl.show();
@@ -129,10 +127,6 @@ class pipeImages extends ImageView {
                             endGame end = new endGame();
                             end.show();
                         }
-                        /*main.readInput(main.levels[++main.level]);
-                                main.lvlStage.changeTitle();
-                                gameStage.firstLevel.print();
-                         */
                     });
                 }
             } else {
@@ -482,6 +476,7 @@ class pauseStage extends Stage {
         });
         homeBtn.setOnMouseClicked(e -> {
             main.buttonPlay();
+            pipeImages.pt.stop();
             main.level = 0;
             main.totalMove = 0;
             gameStage.moveInLevel = 0;
@@ -491,8 +486,7 @@ class pauseStage extends Stage {
             this.close();
             main.lvlStage = new gameStage();
             main.mainStage.show();
-            //main mainMenu = new main();
-            //mainMenu.start(new Stage());
+
         });
         scene.setOnKeyPressed(e -> {
             if (e.getCode().equals(KeyCode.ESCAPE)) {
@@ -687,8 +681,7 @@ class nextLevelStage extends Stage {
             this.close();
             main.mainStage.show();
             main.lvlStage = new gameStage();
-            //main mainMenu = new main();
-            //mainMenu.start(new Stage());
+
         });
     }
 
@@ -711,16 +704,17 @@ class gameStage extends Stage {
     public static MediaPlayer levelSound;
     public static MediaPlayer switchEffect;
     public static MediaPlayer wrongMove;
-
+    public static Scene scene;
     gameStage() {
 
         firstLevel = new ImagePane();
-        Scene scene = new Scene(firstLevel, 400, 400);
+        scene = new Scene(firstLevel, 400, 400);
         this.setScene(scene);
         this.setTitle("Level " + (main.level + 1));
         main.readInput(main.levels[main.level]);
         firstLevel.print();
-
+        scene.setCursor(Cursor.OPEN_HAND);
+        
         try {
             levelSound = new MediaPlayer(new Media(this.getClass().getResource("musics/level" + (main.level + 1) + ".mp3").toExternalForm()));
             wrongMove = new MediaPlayer(new Media(this.getClass().getResource("musics/wrongMove.wav").toExternalForm()));
@@ -729,7 +723,7 @@ class gameStage extends Stage {
         } catch (Exception e) {
             System.out.println("error");
         }
-
+        
         scene.setOnKeyPressed(e -> {
             if (e.getCode().equals(KeyCode.ESCAPE)) {
                 pauseStage pause = new pauseStage();
@@ -764,7 +758,7 @@ public class main extends Application {
     public static MediaPlayer mainSound;
     public static MediaPlayer buttonSound;
     public static Stage mainStage;
-    //public static ImageView background = new ImageView(new Image("images/bg.gif"));
+    
     @Override
     public void start(Stage primaryStage) {
         mainStage = primaryStage;
@@ -828,7 +822,7 @@ public class main extends Application {
         // start game //
         lvlStage = new gameStage();
         
-        //start game end //
+        //button actions
         startButton.setOnMouseClicked(e -> {
             main.buttonPlay();
             primaryStage.close();
@@ -850,9 +844,10 @@ public class main extends Application {
             primaryStage.close();
         });
         
-        LeaderBoard leaderBoard = new LeaderBoard();
+        
         leaderBtn.setOnMouseClicked(e -> {
             main.buttonPlay();
+            LeaderBoard leaderBoard = new LeaderBoard();
             leaderBoard.show();
             primaryStage.close();
         });
@@ -946,42 +941,6 @@ public class main extends Application {
         return null;
     }
 
-    /*private void sortLeaderBoard() {
-        ArrayList<String> leaderboard = new ArrayList<>();
-
-        Scanner sc = null;
-        try {
-            sc = new Scanner(new File("src/leaderboard.txt"));
-        } catch (Exception e) {
-
-        }
-        while (sc.hasNextLine()) {
-            leaderboard.add(sc.nextLine());
-        }
-
-        ArrayList<Integer> scores = new ArrayList<>();
-        ArrayList<String> nicks = new ArrayList<>();
-        for (int i = 0; i < leaderboard.size(); i++) {
-            scores.add(Integer.parseInt(leaderboard.get(i).split(" ")[0]));
-        }
-        System.out.println(leaderboard);
-        System.out.println(scores);
-        Collections.sort(scores);
-        System.out.println(leaderboard);
-        System.out.println(scores);
-
-        for (int i = 0; i < leaderboard.size(); i++) {
-            for (int j = 0; j < leaderboard.size(); j++) {
-                if (Integer.parseInt(leaderboard.get(j).split(" ")[0]) == scores.get(i)) {
-                    if (!nicks.contains(leaderboard.get(j).split(" ")[1])) {
-                        nicks.add(leaderboard.get(j).split(" ")[1]);
-                    }
-                }
-            }
-        }
-        System.out.println(nicks);
-    }*/
-
 }
 
 class creditsStage extends Stage {
@@ -1013,26 +972,6 @@ class creditsStage extends Stage {
         animation.setOnFinished(e -> {
             credits_text.setY(creditsScene.getHeight());
         });
-        /*
-        TranslateTransition transition = new TranslateTransition();
-        transition.setDuration(Duration.seconds(20));
-        transition.setToY(-creditsImage.getHeight()*2);
-        transition.setNode(credits_text);
-        transition.setCycleCount(1);
-        transition.setAutoReverse(false);
-        transition.play();
-        transition.setOnFinished(e -> {
-            System.gc();
-            transition.stop();
-            main.level = 0;
-            main.totalMove = 0;
-            gameStage.moveInLevel = 0;
-            main.lvlStage.close();
-            this.close();
-            main mainMenu = new main();
-            mainMenu.start(new Stage());
-            
-        });*/
 
         root.getChildren().addAll(background, credits_text);
         this.setScene(creditsScene);
@@ -1077,8 +1016,6 @@ class creditsStage extends Stage {
             backMain.close();
             main.lvlStage = new gameStage();
             main.mainStage.show();
-            //main mainMenu = new main();
-            //mainMenu.start(new Stage());
         });
         no.setOnAction(e -> {
             System.exit(0);
@@ -1151,8 +1088,6 @@ class LeaderBoard extends Stage {
             this.close();
             main.mainStage.show();
             
-            //main mainMenu = new main();
-            //mainMenu.start(new Stage());
         });
     }
 
