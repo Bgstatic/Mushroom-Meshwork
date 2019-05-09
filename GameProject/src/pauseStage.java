@@ -1,4 +1,5 @@
 
+import javafx.animation.Animation;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -70,7 +71,9 @@ class pauseStage extends Stage {
         });
         homeBtn.setOnMouseClicked(e -> {
             main.buttonPlay();
-            pipeImages.pt.stop();
+            if(pipeImages.pt != null){
+                pipeImages.pt.stop();
+            }
             main.level = 0;
             main.totalMove = 0;
             gameStage.moveInLevel = 0;

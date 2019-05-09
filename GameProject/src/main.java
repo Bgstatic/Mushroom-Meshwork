@@ -1,6 +1,7 @@
 
 import java.io.File;
 import java.util.Scanner;
+import javafx.animation.FadeTransition;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,6 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  *
@@ -97,10 +99,19 @@ public class main extends Application {
         //button actions
         startButton.setOnMouseClicked(e -> {
             main.buttonPlay();
-            primaryStage.close();
-            lvlStage.show();
-            mainSound.stop();
-            lvlStage.startMusic();
+            FadeTransition fade = new FadeTransition();
+            fade.setDuration(Duration.millis(1000));
+            fade.setNode(root);
+            fade.setFromValue(1);
+            fade.setToValue(0);
+            fade.play();
+            fade.setOnFinished(ef -> {
+                primaryStage.close();
+                lvlStage.show();
+                mainSound.stop();
+                lvlStage.startMusic();
+                root.setOpacity(1);
+            });
         });
 
         button2.setOnMouseClicked(e -> {
@@ -212,5 +223,5 @@ public class main extends Application {
         }
         return null;
     }
-
+    
 }

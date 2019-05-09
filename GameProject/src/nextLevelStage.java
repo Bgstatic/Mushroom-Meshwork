@@ -1,4 +1,5 @@
 
+import javafx.animation.FadeTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -15,6 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
 class nextLevelStage extends Stage {
 
@@ -79,13 +81,22 @@ class nextLevelStage extends Stage {
 
         nextBtn.setOnMouseClicked(e -> {
             main.buttonPlay();
-            gameStage.moveInLevel = 0;
-            this.close();
-            main.readInput(main.levels[++main.level]);
-            main.lvlStage.changeTitle();
-            gameStage.firstLevel.print();
-            winSound.stop();
-            main.lvlStage.startMusic();
+            FadeTransition fade = new FadeTransition();
+            fade.setDuration(Duration.millis(1000));
+            fade.setNode(pane);
+            fade.setFromValue(1);
+            fade.setToValue(0);
+            fade.play();
+            fade.setOnFinished(ef -> {
+                gameStage.moveInLevel = 0;
+                this.close();
+                main.readInput(main.levels[++main.level]);
+                main.lvlStage.changeTitle();
+                gameStage.firstLevel.print();
+                winSound.stop();
+                main.lvlStage.startMusic();
+            });
+
         });
 
         homeButton.setOnMouseClicked(e -> {
@@ -110,6 +121,6 @@ class nextLevelStage extends Stage {
         } catch (Exception e) {
             System.out.println("error");
         }
-
     }
+    
 }
