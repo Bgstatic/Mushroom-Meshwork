@@ -16,8 +16,8 @@ class PipeImages extends ImageView {
     public int initial_index_X, initial_index_Y, final_index_X, final_index_Y;
     public boolean isLevelFinished;
     public Path path = new Path();
-    public int pathIndex;
     public static PathTransition pt;
+    public String previousMove = "toDown";
     
     PipeImages() {
 
@@ -189,8 +189,6 @@ class PipeImages extends ImageView {
         }
         return null;
     }
-
-    String previousMove = "toDown";
 
     public void checkNext(int x, int y) {
         //
