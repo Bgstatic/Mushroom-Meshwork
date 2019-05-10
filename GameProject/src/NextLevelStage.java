@@ -18,13 +18,13 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
-class nextLevelStage extends Stage {
+class NextLevelStage extends Stage { //NextLevelStage Class
 
     double x, y;
     public static MediaPlayer winSound;
 
-    public nextLevelStage() {
-        gameStage.levelSound.stop();
+    public NextLevelStage() { // Constructor 
+        GameStage.levelSound.stop();
         playMusic();
 
         StackPane pane = new StackPane();
@@ -32,30 +32,34 @@ class nextLevelStage extends Stage {
         scene.setFill(Color.TRANSPARENT);
         pane.setBackground(Background.EMPTY);
 
-        Image bg = new Image("images/nextLevel.gif");
+        Image bg = new Image("images/nextLevel.gif"); // Adding mario next level image
         ImageView nextLvlBg = new ImageView(bg);
         nextLvlBg.setFitHeight(475);
         nextLvlBg.setFitWidth(660);
 
         VBox vbox = new VBox();
 
-        Label moveText = new Label("You made : " + gameStage.moveInLevel + " moves." + "(Total:" + main.totalMove + ")");
+        // Adding label for showing total moves  and set the font and color properties 
+        Label moveText = new Label("You made : " + GameStage.moveInLevel + " moves." + "(Total:" + main.totalMove + ")");
         moveText.setFont(new Font("Arial", 26));
         moveText.setTextFill(Color.web("#ffffff"));
         moveText.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 5.0 , 0 , 0 )");
 
         HBox hbox = new HBox();
 
-        Image btnImage = new Image("images/nextLvl.png");
+        Image btnImage = new Image("images/nextLvl.png");// next level button
         ImageView nextBtn = new ImageView(btnImage);
         nextBtn.setFitHeight(75);
         nextBtn.setFitWidth(250);
 
-        Image homeImage = new Image("images/mainMenu.png");
+        Image homeImage = new Image("images/mainMenu.png"); // Main menu image 
         ImageView homeButton = new ImageView(homeImage);
+
+        //Set the properties of the image 
         homeButton.setFitHeight(75);
         homeButton.setFitWidth(250);
 
+        //Setting properties of hbox and add the nodes to given hbox 
         hbox.setSpacing(20);
         hbox.getChildren().addAll(homeButton, nextBtn);
         hbox.setAlignment(Pos.BOTTOM_CENTER);
@@ -70,6 +74,7 @@ class nextLevelStage extends Stage {
         this.setScene(scene);
         this.initStyle(StageStyle.TRANSPARENT);
 
+        // it provides the drag the next level screen
         pane.setOnMousePressed(e -> {
             x = e.getSceneX();
             y = e.getSceneY();
@@ -79,7 +84,7 @@ class nextLevelStage extends Stage {
             this.getScene().getWindow().setY(e.getScreenY() - y);
         });
 
-        nextBtn.setOnMouseClicked(e -> {
+        nextBtn.setOnMouseClicked(e -> {  // when the button pressed it passes to the next level 
             main.buttonPlay();
             FadeTransition fade = new FadeTransition();
             fade.setDuration(Duration.millis(1000));
@@ -88,32 +93,32 @@ class nextLevelStage extends Stage {
             fade.setToValue(0);
             fade.play();
             fade.setOnFinished(ef -> {
-                gameStage.moveInLevel = 0;
+                GameStage.moveInLevel = 0;
                 this.close();
                 main.readInput(main.levels[++main.level]);
                 main.lvlStage.changeTitle();
-                gameStage.firstLevel.print();
+                GameStage.firstLevel.print();
                 winSound.stop();
                 main.lvlStage.startMusic();
             });
 
         });
 
-        homeButton.setOnMouseClicked(e -> {
+        homeButton.setOnMouseClicked(e -> { // when the button pressed it resets the game 
             main.buttonPlay();
             main.level = 0;
             main.totalMove = 0;
-            gameStage.moveInLevel = 0;
+            GameStage.moveInLevel = 0;
             main.mainSound.play();
             main.lvlStage.close();
             this.close();
             main.mainStage.show();
-            main.lvlStage = new gameStage();
+            main.lvlStage = new GameStage();
 
         });
     }
 
-    public void playMusic() {
+    public void playMusic() { // it plays the music when the level is completed
         try {
             winSound = new MediaPlayer(new Media(this.getClass().getResource("musics/levelCompleted.wav").toExternalForm()));
             winSound.setVolume(0.2);
@@ -122,5 +127,5 @@ class nextLevelStage extends Stage {
             System.out.println("error");
         }
     }
-    
+
 }

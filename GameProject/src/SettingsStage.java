@@ -17,15 +17,18 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-class settingsStage extends Stage {
+class SettingsStage extends Stage { //SettingsStage
 
-    public settingsStage() {
+    public SettingsStage() { // Constructor
+
         StackPane pane = new StackPane();
         Scene scene = new Scene(pane, 660, 475);
         scene.setFill(Color.TRANSPARENT);
         pane.setBackground(Background.EMPTY);
 
-        Image bg = new Image("images/settingsWindow.png");
+        Image bg = new Image("images/settingsWindow.png"); // Adding settings Window image 
+
+        // Set properties of the image 
         ImageView pauseBg = new ImageView(bg);
         pauseBg.setFitHeight(475);
         pauseBg.setFitWidth(660);
@@ -33,7 +36,9 @@ class settingsStage extends Stage {
         VBox vbox = new VBox();
 
         StackPane closePane = new StackPane();
-        Image close = new Image("images/closeButton.png");
+        Image close = new Image("images/closeButton.png"); // Adding close button image
+
+        // Set properties of the image 
         ImageView closeButton = new ImageView(close);
         closeButton.setFitHeight(25);
         closeButton.setFitWidth(25);
@@ -45,21 +50,26 @@ class settingsStage extends Stage {
 
         // MAIN MUSIC SLIDER START //
         HBox volumeHbox = new HBox();
+
+        // Adding music slider pattern
         Slider musicVol = new Slider();
+
+        //Setting music slider properties 
         musicVol.setPrefWidth(250);
         musicVol.setMaxWidth(Region.USE_PREF_SIZE);
         musicVol.setMinWidth(30);
         musicVol.setValue(main.mainSound.getVolume() * 200);
         main.mainSound.volumeProperty().bind(musicVol.valueProperty().divide(200));
-        gameStage.levelSound.volumeProperty().bind(musicVol.valueProperty().divide(200));
+        GameStage.levelSound.volumeProperty().bind(musicVol.valueProperty().divide(200));
         volumeHbox.setAlignment(Pos.CENTER);
 
+        //Adding label for music volume
         Label music = new Label("Music volume: ");
         music.setFont(new Font("Arial", 20));
         music.setTextFill(Color.web("#ffffff"));
         music.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 5.0 , 0 , 0 )");
         volumeHbox.getChildren().addAll(music, musicVol);
-        //MAIN MUSIC SLIDER END //
+        // MAIN MUSIC SLIDER END //
 
         // EFFECTS SLIDER START //
         HBox effectsHbox = new HBox();
@@ -67,9 +77,9 @@ class settingsStage extends Stage {
         effectsSlider.setPrefWidth(250);
         effectsSlider.setMaxWidth(Region.USE_PREF_SIZE);
         effectsSlider.setMinWidth(30);
-        effectsSlider.setValue(gameStage.switchEffect.getVolume() * 100);
-        gameStage.switchEffect.volumeProperty().bind(effectsSlider.valueProperty().divide(100));
-        gameStage.wrongMove.volumeProperty().bind(effectsSlider.valueProperty().divide(100));
+        effectsSlider.setValue(GameStage.switchEffect.getVolume() * 100);
+        GameStage.switchEffect.volumeProperty().bind(effectsSlider.valueProperty().divide(100));
+        GameStage.wrongMove.volumeProperty().bind(effectsSlider.valueProperty().divide(100));
         effectsHbox.setAlignment(Pos.CENTER);
 
         Label effects = new Label("Effects volume: ");
@@ -84,7 +94,7 @@ class settingsStage extends Stage {
         volumes.getChildren().addAll(volumeHbox, effectsHbox);
 
         HBox hbox = new HBox();
-        Image homeImage = new Image("images/goback.png");
+        Image homeImage = new Image("images/goback.png"); //Adding goback button 
         ImageView goBackBtn = new ImageView(homeImage);
         goBackBtn.setFitHeight(75);
         goBackBtn.setFitWidth(250);

@@ -17,9 +17,9 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-class endGame extends Stage {
+class EndGame extends Stage {
 
-    endGame() {
+    EndGame() {
 
         StackPane pane = new StackPane();
         Scene scene = new Scene(pane, 660, 475);
@@ -46,7 +46,7 @@ class endGame extends Stage {
         hbox.getChildren().addAll(nick, text);
         hbox.setAlignment(Pos.BOTTOM_CENTER);
 
-        Label moveText = new Label("You made : " + gameStage.moveInLevel + " moves." + "(Total:" + main.totalMove + ")");
+        Label moveText = new Label("You made : " + GameStage.moveInLevel + " moves." + "(Total:" + main.totalMove + ")");
         moveText.setFont(new Font("Arial", 22));
         moveText.setTextFill(Color.web("#ffffff"));
         moveText.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 5.0 , 0 , 0 )");
@@ -63,7 +63,7 @@ class endGame extends Stage {
 
         continueBtn.setOnMouseClicked(e -> {
             writeLeaderBoard(text.getText(), main.totalMove);
-            creditsStage credits = new creditsStage();
+            CreditsStage credits = new CreditsStage();
             credits.show();
             this.close();
         });
@@ -79,6 +79,5 @@ class endGame extends Stage {
         } catch (Exception e) {
 
         }
-        System.out.println(nick + " " + score);
     }
 }

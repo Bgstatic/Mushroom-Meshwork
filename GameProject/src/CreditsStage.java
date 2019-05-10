@@ -14,31 +14,31 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+class CreditsStage extends Stage { // CreditsStage Class
 
-class creditsStage extends Stage {
-
+    // Properties of the class
     public static Timeline animation;
     public static Scene creditsScene;
     public static ImageView credits_text;
-    creditsStage() {
+
+    CreditsStage() { // Constructor
 
         Pane root = new Pane();
         creditsScene = new Scene(root, 1138, 480);
-        Image backgroundImg = new Image("images/bg.gif");
+        Image backgroundImg = new Image("images/bg.gif"); // Adding background image 
         ImageView background = new ImageView(backgroundImg);
-        Image creditsImage = new Image("images/credits_text.png");
+        Image creditsImage = new Image("images/credits_text.png"); // Adding credits text image
         credits_text = new ImageView(creditsImage);
-        credits_text.setY(creditsScene.getHeight());
+        credits_text.setY(creditsScene.getHeight()); // Set the credits text's height
 
-        animation = new Timeline(
-                new KeyFrame(Duration.millis(20), e -> {
-                    if (credits_text.getY() == -creditsImage.getHeight()) {
-                        animation.stop();
+        animation = new Timeline(new KeyFrame(Duration.millis(20), e -> { // It slides the credits text through the pane 
+            if (credits_text.getY() == -creditsImage.getHeight()) {
+                animation.stop();
 
-                        finished();
-                    }
-                    credits_text.setY(credits_text.getY() - 1);
-                }));
+                finished(); // invoke finished method
+            }
+            credits_text.setY(credits_text.getY() - 1);  // It will slides up the text image while the animation continues
+        }));
         animation.setCycleCount(Timeline.INDEFINITE);
         animation.play();
         animation.setOnFinished(e -> {
@@ -48,18 +48,18 @@ class creditsStage extends Stage {
         root.getChildren().addAll(background, credits_text);
         this.setScene(creditsScene);
 
-        creditsScene.setOnKeyPressed(e -> {
+        creditsScene.setOnKeyPressed(e -> { // it will automatically closed when the user presses any button 
             animation.stop();
             credits_text.setY(creditsScene.getHeight());
             finished();
         });
     }
 
-    private void finished() {
+    private void finished() { // finished method terminates the game when the user completed all the levels then it resets the game.
 
         main.level = 0;
         main.totalMove = 0;
-        gameStage.moveInLevel = 0;
+        GameStage.moveInLevel = 0;
         main.lvlStage.close();
         this.close();
 
@@ -86,7 +86,7 @@ class creditsStage extends Stage {
             animation.stop();
             credits_text.setY(creditsScene.getHeight());
             backMain.close();
-            main.lvlStage = new gameStage();
+            main.lvlStage = new GameStage();
             main.mainStage.show();
         });
         no.setOnAction(e -> {

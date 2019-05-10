@@ -21,12 +21,14 @@ class LeaderBoard extends Stage {
     
     public LeaderBoard() {
 
-        sortLeaderBoard();
+        sortLeaderBoard(); //to update leaderboard sort it again.
+        
         StackPane root = new StackPane();
-        Scene creditsScene = new Scene(root, 1138, 480);
+        Scene leaderboardScene = new Scene(root, 1138, 480);
         Image backgroundImg = new Image("images/bg.gif");
         ImageView background = new ImageView(backgroundImg);
         
+        //Go back button to go back main menu.
         Image homeImage = new Image("images/goback.png");
         ImageView homeBtn = new ImageView(homeImage);
         homeBtn.setFitHeight(75);
@@ -37,23 +39,27 @@ class LeaderBoard extends Stage {
         VBox scores = new VBox();
         VBox nicks = new VBox();
         
+        //"Nickname" title label
         Label nickname = new Label("Nickname\n\n");
         nickname.setFont(new Font("Arial", 24));
         nickname.setUnderline(true);
         nickname.setTextFill(Color.web("#ffffff"));
         nickname.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 5.0 , 0 , 0 )");
         
+        //"Score" title label
         Label score = new Label("Score\n\n");
         score.setFont(new Font("Arial", 24));
         score.setUnderline(true);
         score.setTextFill(Color.web("#ffffff"));
         score.setStyle("-fx-effect: dropshadow( one-pass-box , black , 10 , 5.0 , 0 , 0 )");
         
+        //scores from scoresText variable
         Label scoreList = new Label(scoresText);
         scoreList.setFont(new Font("Arial", 20));
         scoreList.setTextFill(Color.web("#ffffff"));
         scoreList.setStyle("-fx-effect: dropshadow( gaussian , rgba(0,0,0,0.5) , 10,0.8,0,0)");
         
+        //nicks from nicksText variable
         Label nickList = new Label(nicksText);
         nickList.setFont(new Font("Arial", 20));
         nickList.setTextFill(Color.web("#ffffff"));
@@ -72,15 +78,17 @@ class LeaderBoard extends Stage {
         mainVBox.getChildren().addAll(hbox, homeBtn);
         root.getChildren().addAll(background, mainVBox);
         
-        this.setScene(creditsScene);
+        this.setScene(leaderboardScene);
         
+        //when click home button it shows main menu.
         homeBtn.setOnMouseClicked(e -> {
             this.close();
             main.mainStage.show();
             
         });
     }
-
+    
+    //sort the leaderboard.txt 
     private void sortLeaderBoard() {
         ArrayList<String> leaderboard = new ArrayList<>();
 
@@ -98,11 +106,12 @@ class LeaderBoard extends Stage {
         ArrayList<String> nicks = new ArrayList<>();
         
         for (int i = 0; i < leaderboard.size(); i++) {
-            scores.add(Integer.parseInt(leaderboard.get(i).split(" ")[0]));
+            scores.add(Integer.parseInt(leaderboard.get(i).split(" ")[0])); //add scores to scores array list from leadeboard.
         }
 
-        Collections.sort(scores);
-
+        Collections.sort(scores); //sorting array.
+        
+        //add nicks the correct position as same as their scores of nicks array.
         for (int i = 0; i < leaderboard.size(); i++) {
             for (int j = 0; j < leaderboard.size(); j++) {
                 if (Integer.parseInt(leaderboard.get(j).split(" ")[0]) == scores.get(i)) {
@@ -113,6 +122,7 @@ class LeaderBoard extends Stage {
             }
         }
         
+        //add scores and nick to scoreText and nicksText variables.
         for(int i = 0; i < scores.size(); i++){
             scoresText += scores.get(i) + "\n";
             nicksText += (i+1) + ". " + nicks.get(i) + "\n";

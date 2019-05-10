@@ -23,12 +23,12 @@ import javafx.util.Duration;
 
 public class main extends Application {
 
-    public static pipeImages[][] images = new pipeImages[4][4];
-    public static mushroomImage mushroom;
+    public static PipeImages[][] images = new PipeImages[4][4];
+    public static MushroomImage mushroom;
     public static int totalMove;
     public static int level = 0;
     public static String[] levels = {"src/level1.txt", "src/level2.txt", "src/level3.txt", "src/level4.txt", "src/level5.txt"};
-    public static gameStage lvlStage;
+    public static GameStage lvlStage;
     public static MediaPlayer mainSound;
     public static MediaPlayer buttonSound;
     public static Stage mainStage;
@@ -37,6 +37,8 @@ public class main extends Application {
     public void start(Stage primaryStage) {
         mainStage = primaryStage;
         // Main scene //
+        
+        //This try catch to add music to main menu and add sound effect for buttons.
         try {
             mainSound = new MediaPlayer(new Media(this.getClass().getResource("musics/mainScene.mp3").toExternalForm()));
             mainSound.setVolume(0.2);
@@ -48,94 +50,103 @@ public class main extends Application {
         } catch (Exception e) {
             System.out.println("error");
         }
+        
+        //Main Scene start
         StackPane root = new StackPane();
         Scene mainScene = new Scene(root, 1138, 480);
         
-        Image bgImage = new Image("images/bg.gif");
+        Image bgImage = new Image("images/bg.gif"); //background gif
         ImageView background = new ImageView(bgImage);
 
         VBox vbox = new VBox();
-
-        Image btnImage = new Image("images/start.png");
+        //start button
+        Image btnImage = new Image("images/start.png"); 
         ImageView startButton = new ImageView(btnImage);
         startButton.setFitHeight(75);
         startButton.setFitWidth(300);
-
-        Image btnImage2 = new Image("images/settings.png");
-        ImageView button2 = new ImageView(btnImage2);
-        button2.setFitHeight(75);
-        button2.setFitWidth(300);
+        
+        //settings button
+        Image settingsImage = new Image("images/settings.png"); 
+        ImageView settingsBtn = new ImageView(settingsImage);
+        settingsBtn.setFitHeight(75);
+        settingsBtn.setFitWidth(300);
 
         HBox bottomHBox = new HBox();
         HBox leaderboardHbox = new HBox();
+        
+        //leaderboard icon 
         Image leaderImg = new Image("images/cup.png");
         ImageView leaderBtn = new ImageView(leaderImg);
         leaderBtn.setFitHeight(75);
         leaderBtn.setFitWidth(75);
         leaderboardHbox.getChildren().add(leaderBtn);
         
+        //credits button
         Image creditsImg = new Image("images/credits.png");
         ImageView creditsBtn = new ImageView(creditsImg);
         creditsBtn.setFitHeight(75);
         creditsBtn.setFitWidth(300);
         
-        bottomHBox.setAlignment(Pos.BOTTOM_RIGHT);
+        bottomHBox.setAlignment(Pos.BOTTOM_RIGHT); // set the leaderboard icon to the right side of the bottom.
         bottomHBox.setPadding(new Insets(0,10,5,0));
         bottomHBox.getChildren().addAll(leaderboardHbox);
         
-        vbox.setAlignment(Pos.BOTTOM_CENTER);
-        vbox.getChildren().addAll(startButton, button2, creditsBtn, bottomHBox);
+        vbox.setAlignment(Pos.BOTTOM_CENTER); //Set buttons to center of the scene. 
+        vbox.getChildren().addAll(startButton, settingsBtn, creditsBtn, bottomHBox); //add all nodes to pane.
 
-        root.getChildren().addAll(background, vbox);
+        root.getChildren().addAll(background, vbox); //add background and vbox pane to main pane
 
-        primaryStage.setTitle("Game Project");
+        primaryStage.setTitle("Mushroom Mashwork");
         primaryStage.setScene(mainScene);
         primaryStage.show();
         // Main scene end //
 
         // start game //
-        lvlStage = new gameStage();
+        lvlStage = new GameStage(); //create new gameStage class
         
-        //button actions
+        // ** button actions **//
+        //start button action
         startButton.setOnMouseClicked(e -> {
-            main.buttonPlay();
+            main.buttonPlay(); //button click sound effect
+            //After click the start button it starts the game with fade effect.
             FadeTransition fade = new FadeTransition();
             fade.setDuration(Duration.millis(1000));
             fade.setNode(root);
             fade.setFromValue(1);
             fade.setToValue(0);
             fade.play();
-            fade.setOnFinished(ef -> {
-                primaryStage.close();
-                lvlStage.show();
-                mainSound.stop();
-                lvlStage.startMusic();
-                root.setOpacity(1);
+            fade.setOnFinished(ef -> { //when fade effect finished, program keeps with these steps.
+                primaryStage.close(); //main screen close.
+                lvlStage.show(); // game board comes up.
+                mainSound.stop(); // main menu music stops.
+                lvlStage.startMusic(); //game music starts.
+                root.setOpacity(1); // after fade transition set root pane's opactiy to 1.
             });
         });
-
-        button2.setOnMouseClicked(e -> {
-            main.buttonPlay();
-            settingsStage settings = new settingsStage();
+        //settings button action
+        settingsBtn.setOnMouseClicked(e -> { //when the button clicked, settings menu shows up.
+            main.buttonPlay(); //button click sound effect
+            SettingsStage settings = new SettingsStage();
             settings.show();
         });
-        
-        creditsBtn.setOnMouseClicked(e -> {
-            main.buttonPlay();
-            creditsStage credits = new creditsStage();
+        //credits button action
+        creditsBtn.setOnMouseClicked(e -> {  //when the button clicked, credits shows up. 
+            main.buttonPlay(); //button click sound effect
+            CreditsStage credits = new CreditsStage();
             credits.show();
             primaryStage.close();
         });
-        
-        
-        leaderBtn.setOnMouseClicked(e -> {
-            main.buttonPlay();
+        //leaderboard icon action
+        leaderBtn.setOnMouseClicked(e -> {  //when the icon clicked, leaderboard shows up.
+            main.buttonPlay(); //button click sound effect
             LeaderBoard leaderBoard = new LeaderBoard();
             leaderBoard.show();
             primaryStage.close();
         });
+        //button actions end
     }
-
+    
+    //sound effect starter method.
     public static void buttonPlay() {
         main.buttonSound.stop();
         main.buttonSound.play();
@@ -144,7 +155,9 @@ public class main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
+    
+    //get level informations from the file which is given as argument.
+    //After that informations, creates pipe images based on text's contents.
     public static void readInput(String file) {
 
         try {
@@ -154,17 +167,22 @@ public class main extends Application {
                 String read = input.nextLine();
                 String[] parsed = read.split(",");
 
-                int position = Integer.parseInt(parsed[0]);
-                String type = parsed[1];
-                String direction = parsed[2];
-                String imageType = findImageType(type, direction);
+                int position = Integer.parseInt(parsed[0]); //position of pipe on board.
+                String type = parsed[1]; // type of pipe (Starter, Pipe, etc.)
+                String direction = parsed[2]; // direction of pipe (Vertical, horizontal, etc.)
+                String imageType = findImageType(type, direction); //get image url via findImageType method.
                 Image image = new Image(imageType);
-                pipeImages imageView = new pipeImages(image, direction, type);
+                PipeImages imageView = new PipeImages(image, direction, type); //creates the image based on the given image, direction and type.
 
-                //burda özellik veririm imageviewe
+                //set heigt and width properties of the images.
                 imageView.setFitHeight(100);
                 imageView.setFitWidth(100);
-                //
+                
+                //To add exact position of the images to images array.
+                //After getting the position from input, it finds indexes's of image with some mathematical operations.
+                //To find first index of image, davide position with 4.1 (For example: if position 15, 15/4.1 = 3 => its first index = 3.
+                //To find second index of image, take mod of position from 4.1 and ceiling it and subtract 1. 
+                //(For example: 15 % 4.1 = 2.7, to cail => 3, substract => 2. So its indexes are => [3,2]
                 images[(int) (position / 4.1)][((int) Math.ceil(position % 4.1)) - 1] = imageView;
             }
 
@@ -172,7 +190,8 @@ public class main extends Application {
 
         }
     }
-
+    
+    //It returns the exact url of the images based on the given characteristic features.
     public static String findImageType(String type, String direction) {
         if (type.equals("Starter")) {
             if (direction.equals("Vertical")) {

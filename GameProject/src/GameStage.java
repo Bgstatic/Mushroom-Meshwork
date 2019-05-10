@@ -7,7 +7,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
 
-class gameStage extends Stage {
+class GameStage extends Stage {
 
     public static ImagePane firstLevel;
     public static int moveInLevel;
@@ -15,16 +15,17 @@ class gameStage extends Stage {
     public static MediaPlayer switchEffect;
     public static MediaPlayer wrongMove;
     public static Scene scene;
-    gameStage() {
+    GameStage() {
 
-        firstLevel = new ImagePane();
-        scene = new Scene(firstLevel, 400, 400);
-        this.setScene(scene);
-        this.setTitle("Level " + (main.level + 1));
-        main.readInput(main.levels[main.level]);
-        firstLevel.print();
+        firstLevel = new ImagePane(); // Creating new Image pane. 
+	scene = new Scene(firstLevel, 400, 400); // Set the properties of the scene.
+	this.setScene(scene);
+        this.setTitle("Level " + (main.level + 1)); // Set title based on given level number
+	main.readInput(main.levels[main.level]);  //Crate the game board with readInput method based on given file
+	firstLevel.print(); // adding images to board.
         scene.setCursor(Cursor.OPEN_HAND);
         
+        //adding musics and sound effects.
         try {
             levelSound = new MediaPlayer(new Media(this.getClass().getResource("musics/level" + (main.level + 1) + ".mp3").toExternalForm()));
             wrongMove = new MediaPlayer(new Media(this.getClass().getResource("musics/wrongMove.wav").toExternalForm()));
@@ -33,25 +34,25 @@ class gameStage extends Stage {
         } catch (Exception e) {
             System.out.println("error");
         }
-        
-        scene.setOnKeyPressed(e -> {
+        //To show pause menu after click ESC.
+        scene.setOnKeyPressed(e -> { 
             if (e.getCode().equals(KeyCode.ESCAPE)) {
-                pauseStage pause = new pauseStage();
+                PauseStage pause = new PauseStage();
                 pause.show();
             }
         });
     }
-
+    //Change Stage's title with level information. (Level 1, Level 2, ..)
     public void changeTitle() {
         this.setTitle("Level " + (main.level + 1));
     }
-
+    //start level music method.
     public void startMusic() {
         levelSound = new MediaPlayer(new Media(this.getClass().getResource("musics/level" + (main.level + 1) + ".mp3").toExternalForm()));
         levelSound.setVolume(main.mainSound.getVolume());
         levelSound.play();
     }
-
+    //to stop level music.
     public void stopMusic() {
         levelSound.stop();
     }
