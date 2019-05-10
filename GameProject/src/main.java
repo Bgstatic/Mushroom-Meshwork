@@ -101,10 +101,12 @@ public class main extends Application {
         primaryStage.show();
         // Main scene end //
         
+        lvlStage = new GameStage(); //create new gameStage class to start game
+        
         // ** button actions **//
         //start button action
         startButton.setOnMouseClicked(e -> {
-            lvlStage = new GameStage(); //create new gameStage class to start game
+
             main.buttonPlay(); //button click sound effect
             //After click the start button it starts the game with fade effect.
             FadeTransition fade = new FadeTransition();
