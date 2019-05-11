@@ -17,6 +17,11 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+//Bilgehan Geçici 150117072
+//Anıl Şenay 150117023
+
+//This class creates a screen at the end of the game and it prints the total number of moves done by user and it has a name input section for the leader board section.
+
 class EndGame extends Stage {
 
     EndGame() {
