@@ -27,7 +27,7 @@ public class main extends Application {
     public static MushroomImage mushroom;
     public static int totalMove;
     public static int level = 0;
-    public static String[] levels = {"src/level1.txt", "src/level2.txt", "src/level3.txt", "src/level4.txt", "src/level5.txt"};
+    public static String[] levels = {"level1.txt", "level2.txt", "level3.txt", "level4.txt", "level5.txt"};
     public static GameStage lvlStage;
     public static MediaPlayer mainSound;
     public static MediaPlayer buttonSound;
@@ -161,6 +161,10 @@ public class main extends Application {
     public static void readInput(String file) {
 
         try {
+            File test = new File(file);
+            if(!test.exists()){
+                file = "src/"+file;
+            }
             Scanner input = new Scanner(new File(file));
 
             while (input.hasNextLine()) {
@@ -187,7 +191,7 @@ public class main extends Application {
             }
 
         } catch (Exception e) {
-
+            System.out.println("Photo could not added into array");
         }
     }
     
