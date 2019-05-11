@@ -14,6 +14,11 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+//Bilgehan Geçici 150117072 
+// Anıl Şenay 150117023
+
+//This program creates credit screen at the end of the game. When the user finishes the game the credit screen shows up
+
 class CreditsStage extends Stage { // CreditsStage Class
 
     // Properties of the class
