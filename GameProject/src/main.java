@@ -16,11 +16,11 @@ import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-/**
- *
- * @author anil
- */
+//Bilgehan Geçici 150117072
+//Anıl Şenay 150117023
 
+/*This program aims that the user puts the pipes in the correct positions and make the right way for the mushroom to progress in order to 
+complete the given levels*/
 public class main extends Application {
 
     public static PipeImages[][] images = new PipeImages[4][4];
