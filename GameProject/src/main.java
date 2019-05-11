@@ -161,10 +161,14 @@ public class main extends Application {
     public static void readInput(String file) {
 
         try {
+            //This part important because IDE do not run if file name was not "src/...txt"
+            //Also If you try to run the program from terminal, it do not run with "src/" you have to remove src path.
+            //With this 4 line it become runnable for both.
             File test = new File(file);
             if(!test.exists()){
                 file = "src/"+file;
             }
+            
             Scanner input = new Scanner(new File(file));
 
             while (input.hasNextLine()) {
