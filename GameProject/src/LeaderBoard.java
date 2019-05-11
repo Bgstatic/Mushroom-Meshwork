@@ -15,6 +15,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+//Bilgehan Geçici 150117072
+//Anıl Şenay 150117023
+
+//This class creates a leader board screen on the game. It keeps the number of moves and user's name and it sorts the total number of moves in descending order
+
 class LeaderBoard extends Stage {
     String scoresText = "";
     String nicksText = "";

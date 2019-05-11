@@ -16,11 +16,11 @@ import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-/**
- *
- * @author anil
- */
+//Bilgehan Geçici 150117072
+//Anıl Şenay 150117023
 
+/*This program aims that the user puts the pipes in the correct positions and make the right way for the mushroom to progress in order to 
+complete the given levels*/
 public class main extends Application {
 
     public static PipeImages[][] images = new PipeImages[4][4];
@@ -100,13 +100,13 @@ public class main extends Application {
         primaryStage.setScene(mainScene);
         primaryStage.show();
         // Main scene end //
-
-        // start game //
-        lvlStage = new GameStage(); //create new gameStage class
+        
+        lvlStage = new GameStage(); //create new gameStage class to start game
         
         // ** button actions **//
         //start button action
         startButton.setOnMouseClicked(e -> {
+
             main.buttonPlay(); //button click sound effect
             //After click the start button it starts the game with fade effect.
             FadeTransition fade = new FadeTransition();

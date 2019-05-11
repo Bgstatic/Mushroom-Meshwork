@@ -17,7 +17,12 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-class SettingsStage extends Stage { //SettingsStage
+//Bilgehan Geçici 150117072
+//Anıl Şenay 150117023
+
+//This class creates a screen on the game for some volume settings
+
+class SettingsStage extends Stage { //SettingsStage class
 
     public SettingsStage() { // Constructor
 

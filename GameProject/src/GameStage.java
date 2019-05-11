@@ -6,6 +6,10 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
+//Bilgehan Geçici 150117072
+//Anıl Şenay 150117023
+
+//This class constructs the game board to the game with readInput method based on given file.
 
 class GameStage extends Stage {
 

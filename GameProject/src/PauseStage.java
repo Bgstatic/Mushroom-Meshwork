@@ -14,6 +14,11 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+//Bilgehan Geçici 150117072
+//Anıl Şenay 150117023
+
+//This class creates pause menu on the game. it can be possible to reach main menu and settings menu via this class.
+
 class PauseStage extends Stage {
 
     public PauseStage() {

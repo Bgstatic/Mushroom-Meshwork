@@ -9,6 +9,11 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.util.Duration;
 
+//Bilgehan Geçici 150117072
+//Anıl Şenay 150117023
+
+// This class creates appropriate path in order to mushroom's progress and it also provides swapping process for pipes and other moveable images
+
 class PipeImages extends ImageView {
 
     public String type;

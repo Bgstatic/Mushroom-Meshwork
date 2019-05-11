@@ -18,12 +18,17 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
+//Bilgehan Geçici 150117072
+//Anıl Şenay 150117023
+
+//This class creates next level screen on the game. When the user completes the level the next level screen shows up.
+
 class NextLevelStage extends Stage { //NextLevelStage Class
 
     double x, y;
-    public static MediaPlayer winSound;
+    public static MediaPlayer winSound; 
 
-    public NextLevelStage() { // Constructor 
+    public NextLevelStage() {
         GameStage.levelSound.stop();
         playMusic();
 
@@ -38,7 +43,7 @@ class NextLevelStage extends Stage { //NextLevelStage Class
         nextLvlBg.setFitWidth(660);
 
         VBox vbox = new VBox();
-
+		
         // Adding label for showing total moves  and set the font and color properties 
         Label moveText = new Label("You made : " + GameStage.moveInLevel + " moves." + "(Total:" + main.totalMove + ")");
         moveText.setFont(new Font("Arial", 26));
@@ -47,19 +52,16 @@ class NextLevelStage extends Stage { //NextLevelStage Class
 
         HBox hbox = new HBox();
 
-        Image btnImage = new Image("images/nextLvl.png");// next level button
+        Image btnImage = new Image("images/nextLvl.png"); // next level button
         ImageView nextBtn = new ImageView(btnImage);
         nextBtn.setFitHeight(75);
         nextBtn.setFitWidth(250);
 
         Image homeImage = new Image("images/mainMenu.png"); // Main menu image 
         ImageView homeButton = new ImageView(homeImage);
-
-        //Set the properties of the image 
         homeButton.setFitHeight(75);
         homeButton.setFitWidth(250);
 
-        //Setting properties of hbox and add the nodes to given hbox 
         hbox.setSpacing(20);
         hbox.getChildren().addAll(homeButton, nextBtn);
         hbox.setAlignment(Pos.BOTTOM_CENTER);
@@ -73,8 +75,8 @@ class NextLevelStage extends Stage { //NextLevelStage Class
 
         this.setScene(scene);
         this.initStyle(StageStyle.TRANSPARENT);
-
-        // it provides the drag the next level screen
+         
+		 // it provides drag the next level screen
         pane.setOnMousePressed(e -> {
             x = e.getSceneX();
             y = e.getSceneY();
@@ -84,23 +86,15 @@ class NextLevelStage extends Stage { //NextLevelStage Class
             this.getScene().getWindow().setY(e.getScreenY() - y);
         });
 
-        nextBtn.setOnMouseClicked(e -> {  // when the button pressed it passes to the next level 
+        nextBtn.setOnMouseClicked(e -> { // when the button pressed it passes to the next level 
+        	 GameStage.moveInLevel = 0;
+             this.close();
+             main.readInput(main.levels[++main.level]);
+             main.lvlStage.changeTitle();
+             GameStage.firstLevel.print();
+             winSound.stop();
+             main.lvlStage.startMusic();
             main.buttonPlay();
-            FadeTransition fade = new FadeTransition();
-            fade.setDuration(Duration.millis(1000));
-            fade.setNode(pane);
-            fade.setFromValue(1);
-            fade.setToValue(0);
-            fade.play();
-            fade.setOnFinished(ef -> {
-                GameStage.moveInLevel = 0;
-                this.close();
-                main.readInput(main.levels[++main.level]);
-                main.lvlStage.changeTitle();
-                GameStage.firstLevel.print();
-                winSound.stop();
-                main.lvlStage.startMusic();
-            });
 
         });
 
@@ -127,5 +121,5 @@ class NextLevelStage extends Stage { //NextLevelStage Class
             System.out.println("error");
         }
     }
-
+    
 }
