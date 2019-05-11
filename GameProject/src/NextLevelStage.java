@@ -18,6 +18,11 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
+//Bilgehan Geçici 150117072
+//Anıl Şenay 150117023
+
+//This class creates next level screen on the game. When the user completes the level the next level screen shows up.
+
 class NextLevelStage extends Stage { //NextLevelStage Class
 
     double x, y;
