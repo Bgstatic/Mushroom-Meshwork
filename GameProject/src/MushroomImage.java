@@ -2,6 +2,11 @@
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+//Bilgehan Geçici 150117072
+//Anıl Şenay 150117023
+
+//This class creates a mushroom image on the game 
+
 class MushroomImage extends ImageView {
 
     MushroomImage(Image image, double x, double y) { //constructor
