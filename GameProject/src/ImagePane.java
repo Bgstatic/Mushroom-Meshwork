@@ -3,8 +3,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 
-class ImagePane extends Pane {
+//Bilgehan Geçici 150117072
+//Anıl Şenay 150117023
 
+//This class creates the game board on the game based on the given input txt. It actually prints the image array in order to create the game board 
+
+class ImagePane extends Pane {
+    
     ImagePane() {
     }
     //it sets the locations of the images which are in the images array.
