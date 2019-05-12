@@ -25,6 +25,8 @@ class GameStage extends Stage {
 	scene = new Scene(firstLevel, 400, 400); // Set the properties of the scene.
 	this.setScene(scene);
         this.setTitle("Level " + (main.level + 1)); // Set title based on given level number
+	this.setResizable(false);
+    	this.sizeToScene(); //to fit scene to stage
 	main.readInput(main.levels[main.level]);  //Crate the game board with readInput method based on given file
 	firstLevel.print(); // adding images to board.
         scene.setCursor(Cursor.OPEN_HAND);
