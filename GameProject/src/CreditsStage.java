@@ -53,8 +53,7 @@ class CreditsStage extends Stage { // CreditsStage Class
         root.getChildren().addAll(background, credits_text);
         this.setScene(creditsScene);
         this.setTitle("Thank you for playing our game!");
-        this.setResizable(false);
-        this.sizeToScene(); //to fit scene to stage
+
         
         creditsScene.setOnKeyPressed(e -> { // it will automatically closed when the user presses any button 
             animation.stop();

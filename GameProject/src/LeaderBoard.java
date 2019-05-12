@@ -84,8 +84,7 @@ class LeaderBoard extends Stage {
         root.getChildren().addAll(background, mainVBox);
         
         this.setScene(leaderboardScene);
-        this.setResizable(false);
-        this.sizeToScene(); // to fit scene to stage
+
         //when click home button it shows main menu.
         homeBtn.setOnMouseClicked(e -> {
             this.close();

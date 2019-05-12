@@ -98,8 +98,6 @@ public class main extends Application {
 
         primaryStage.setTitle("Mushroom Meshwork");
         primaryStage.setScene(mainScene);
-        primaryStage.setResizable(false); //make the stage not resizable
-        primaryStage.sizeToScene(); // fit the scene to stage
         primaryStage.show();
         // Main scene end //
         
