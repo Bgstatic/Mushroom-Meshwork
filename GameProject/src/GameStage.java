@@ -36,7 +36,7 @@ class GameStage extends Stage {
             switchEffect = new MediaPlayer(new Media(this.getClass().getResource("musics/switch.wav").toExternalForm()));
             levelSound.setVolume(main.mainSound.getVolume());
         } catch (Exception e) {
-            System.out.println("error");
+            System.out.println("Level music and effects could not loaded.");
         }
         //To show pause menu after click ESC.
         scene.setOnKeyPressed(e -> { 
