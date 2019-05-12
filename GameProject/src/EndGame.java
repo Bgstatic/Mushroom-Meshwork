@@ -76,13 +76,17 @@ class EndGame extends Stage {
 
     public void writeLeaderBoard(String nick, int score) {
         try {
-            PrintWriter file = new PrintWriter(new FileWriter("src/leaderboard.txt", true));
+        	File txtfile = new File("src/leaderboard.txt");
+        	if(!txtfile.exists()) {
+        		txtfile = new File("leaderboard.txt");
+        	}
+            PrintWriter file = new PrintWriter(new FileWriter(txtfile, true));
 
             file.println(score + " " + nick);
 
             file.close();
         } catch (Exception e) {
-
+            System.out.println("leaderboard.txt could not loaded. Please fix your txt file location");
         }
     }
 }
