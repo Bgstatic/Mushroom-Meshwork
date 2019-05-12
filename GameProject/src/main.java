@@ -96,7 +96,7 @@ public class main extends Application {
 
         root.getChildren().addAll(background, vbox); //add background and vbox pane to main pane
 
-        primaryStage.setTitle("Mushroom Mashwork");
+        primaryStage.setTitle("Mushroom Meshwork");
         primaryStage.setScene(mainScene);
         primaryStage.setResizable(false); //make the stage not resizable
         primaryStage.sizeToScene(); // fit the scene to stage
