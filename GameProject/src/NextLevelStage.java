@@ -118,7 +118,7 @@ class NextLevelStage extends Stage { //NextLevelStage Class
             winSound.setVolume(0.2);
             winSound.play();
         } catch (Exception e) {
-            System.out.println("error");
+            System.out.println("level completed music could not loaded.");
         }
     }
     
