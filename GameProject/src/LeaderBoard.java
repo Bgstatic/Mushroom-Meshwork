@@ -99,9 +99,13 @@ class LeaderBoard extends Stage {
 
         Scanner sc = null;
         try {
-            sc = new Scanner(new File("src/leaderboard.txt"));
+            File leaderboardTxt = new File("leaderboard.txt");
+            if(!leaderboardTxt.exists()){
+            	leaderboardTxt = new File("src/leaderboard.txt");
+            }
+            sc = new Scanner(leaderboardTxt);
         } catch (Exception e) {
-
+            System.out.println("leaderboard.txt could not loaded. Please fix your txt file location");
         }
         while (sc.hasNextLine()) {
             leaderboard.add(sc.nextLine());
