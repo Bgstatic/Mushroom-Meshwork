@@ -48,7 +48,7 @@ public class main extends Application {
             buttonSound.setVolume(0.2);
 
         } catch (Exception e) {
-            System.out.println("error");
+            System.out.println("Main Menu - Musics could not loaded.");
         }
         
         //Main Scene start
@@ -195,7 +195,7 @@ public class main extends Application {
             }
 
         } catch (Exception e) {
-            System.out.println("Photo could not added into array");
+            System.out.println("Photo could not added into array (please fix location of your level txt files)");
         }
     }
     
