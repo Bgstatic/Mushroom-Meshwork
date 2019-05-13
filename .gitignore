@@ -5,3 +5,4 @@ build.xml
 manifest.mf
 *.class
 /GameProject/dist/
+*.zip
